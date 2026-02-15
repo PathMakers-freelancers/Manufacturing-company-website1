@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // COMMAND CENTER</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .module-action-group {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Main Content Container */
+        .command-area {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 60px var(--gutter);
+            position: relative;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .v-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--v-border);
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px;
+            transition: 0.4s var(--ease);
+        }
+
+        [data-theme="light"] .v-panel {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .v-panel:hover {
+            border-color: var(--v-accent);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .chart-container-sm {
+            height: 120px;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .chart-container-md {
+            height: 250px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        [data-theme="light"] .v-stat {
+            color: #1a1a2e;
+        }
+
+        [data-theme="light"] .v-label,
+        [data-theme="light"] .v-label-sm {
+            color: #1a1a2e;
+            opacity: 1 !important;
+            font-weight: 700;
+        }
+
+        .v-label,
+        .v-label-sm {
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            opacity: 1 !important;
+        }
+
+        [data-theme="light"] .v-label,
+        [data-theme="light"] .v-label-sm {
+            text-shadow: none !important;
+            color: #1a1a2e;
+        }
+
+        .text-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-top: 15px;
+        }
+
+        .command-directive {
+            grid-column: span 12;
+            padding: 40px;
+            background: linear-gradient(90deg, rgba(0, 122, 255, 0.05), transparent);
+            border-left: 4px solid var(--v-accent);
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .directive-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--v-accent);
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .directive-body {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            max-width: 900px;
+            line-height: 1.4;
+        }
+
+        .interactive-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 122, 255, 0.05);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s var(--ease);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .v-panel:hover .interactive-overlay {
+            opacity: 1;
+        }
+
+        .pulse-alert {
+            animation: tactical-pulse 2s infinite;
+        }
+
+        @keyframes tactical-pulse {
+            0% {
+                text-shadow: 0 0 5px var(--gold);
+                opacity: 1;
+            }
+
+            50% {
+                text-shadow: 0 0 20px var(--gold);
+                opacity: 0.7;
+            }
+
+            100% {
+                text-shadow: 0 0 5px var(--gold);
+                opacity: 1;
+            }
+        }
+
+        .v-panel {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .v-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s var(--ease);
+        }
+
+        .v-panel:hover::before {
+            transform: translateX(100%);
+        }
+
+        .tooltip-custom {
+            background: rgba(5, 5, 5, 0.95);
+            border: 1px solid var(--accent);
+            padding: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #fff;
+            pointer-events: none;
+            position: absolute;
+            z-index: 1000;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .v-label-sm {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .tactical-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .tactical-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+            margin-top: 20px;
+            font-family: var(--font-mono);
+            min-width: 600px;
+        }
+
+        .tactical-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            opacity: 0.4;
+        }
+
+        .tactical-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .v-panel {
+                grid-column: span 1 !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tactical-module-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .module-action-group {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+
+            header h1 {
+                font-size: 2.5rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link mobile-only-link"
+                    style="display: none; font-weight: 800; color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px;">WEBSITE</a>
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link active">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- New Top-mounted Module Navigation -->
+    <div class="tactical-module-bar">
+        <a href="#health" class="module-item active"><i data-lucide="server"></i> SYS_HEALTH</a>
+        <a href="#nodes" class="module-item"><i data-lucide="globe"></i> NODE_MGMT</a>
+        <a href="#users" class="module-item"><i data-lucide="user-check"></i> USER_AUDIT</a>
+        <a href="#security" class="module-item"><i data-lucide="shield-alert"></i> SECURITY_MATRIX</a>
+
+        <div class="tactical-ticker">
+            <div class="ticker-item">CORE_LOAD: <b>42%</b></div>
+            <div class="ticker-item">ACTIVE_ADMINS: <b>02</b></div>
+        </div>
+
+        <div class="module-action-group">
+            <button class="v-button" style="padding: 8px 15px; font-size: 0.75rem;"><span>FLUSH_CACHE</span></button>
+            <button class="v-button"
+                style="padding: 8px 15px; font-size: 0.75rem; background: #666666;"><span>MASTER_LOCK</span></button>
+        </div>
+    </div>
+
+    <main class="command-area">
+        <header style="margin-bottom: 60px;">
+            <span class="v-label">STRATEGIC_COMMAND // GLOBAL_LATTICE</span>
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
+                <h1 style="font-size: 4rem; margin-top: 10px; letter-spacing: -3px; font-weight: 900;">System Supremacy.
+                </h1>
+                <div style="text-align: right; display: flex; gap: 40px; align-items: flex-end;">
+                    <div style="text-align: left;" class="pulse-alert">
+                        <span class="v-label-sm">DEFCON_LEVEL</span>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--gold);">LEVEL_04</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="v-label-sm">GLOBAL_UPTIME</span>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: #00FF00;">99.9999%</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Row 1: Vital Stats -->
+            <div class="v-panel" style="grid-column: span 6;" id="health">
+                <span class="v-label-sm">CPU_LOAD // CLUSTER_ALPHA</span>
+                <div class="chart-container-sm"><canvas id="cpuChart"></canvas></div>
+                <div class="text-content">
+                    Current load is within nominal parameters. Predicted surge in 02h 14m due to scheduled batch
+                    processing.
+                </div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">MEM_STABILITY // L2_CACHE</span>
+                <div class="chart-container-sm"><canvas id="memChart"></canvas></div>
+                <div class="text-content">
+                    Cache integrity at 98.4%. Primary buffers are cleared. No fragmentation detected in orbital sync
+                    modules.
+                </div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">TRAFFIC_SYNC // GLOBAL_EDGE</span>
+                <div class="chart-container-sm"><canvas id="trafficChart"></canvas></div>
+                <div class="text-content">
+                    Data throughput peaking at 14.2 GB/s. European nodes report zero packet loss. Asian gateway latency
+                    at 12ms.
+                </div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">GLOBAL_LATENCY_HEATMAP</span>
+                <div class="chart-container-sm"><canvas id="latencyHeatChart"></canvas></div>
+                <div class="text-content">
+                    Average global latency at 18ms. No anomalous spikes detected in the last 4 cycles.
+                </div>
+            </div>
+
+            <!-- Row 2: Deep Analysis -->
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label">STRATEGIC_LATTICE_VISUALIZATION</span>
+                <div class="chart-container-md"><canvas id="latticeChart"></canvas></div>
+                <div class="text-content"
+                    style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
+                    <div>
+                        <h4
+                            style="font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 10px; color: var(--v-accent);">
+                            MAPPING_EFFICIENCY</h4>
+                        <p style="font-size: 0.9rem; opacity: 0.6;">Lattice efficiency increased by 15%. Optimal
+                            routing is active for mission-critical packets across sectors.</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 0.95rem; letter-spacing: 1px; margin-bottom: 10px; color: var(--v-gold);">
+                            INTEGRITY_INDEX</h4>
+                        <p style="font-size: 0.9rem; opacity: 0.6;">Security measures blocked 1.2k unauthorized pings.
+                            All firewalls operating at maximum defensive posture.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label">EXECUTIVE_SUMMARY</span>
+                <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <span class="v-label-accent">MISSION_CRITICAL</span>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Project 'Vanguard' is 88% complete. Final
+                            orbital
+                            integration scheduled for Q3-2026.</p>
+                    </div>
+                    <div>
+                        <span class="v-label-accent" style="color: #00FF00;">OPERATIONAL_STATUS</span>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Global uptime at 99.9999%. No major incidents
+                            reported in the last 24 cycles.</p>
+                    </div>
+                    <div>
+                        <span class="v-label-accent" style="color: #666666;">RISK_ASSESSMENT</span>
+                        <p style="font-size: 0.95rem; margin-top: 5px;">Potential bottleneck in SEA-042 uplink.
+                            Maintenance teams are on standby.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Metrics -->
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">INFRASTRUCTURE_HEALTH</span>
+                <div class="chart-container-sm"><canvas id="infraHealthChart"></canvas></div>
+                <div class="text-content">92% of hardware nodes in green state. Scheduled maintenance for Station-X in
+                    48h. Deep-sea cooling nodes at 100% capacity.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">SOVEREIGN_CREDITS_FLOW</span>
+                <div class="chart-container-sm"><canvas id="revenueChart"></canvas></div>
+                <div class="text-content">Net inflow peak at 1.2M SC/cycle. Trading volumes remain high across the outer
+                    belt hubs. Neural-bond assets up by 4.2%.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">USER_AUDIT_GROWTH</span>
+                <div class="chart-container-sm"><canvas id="userGrowthChart"></canvas></div>
+                <div class="text-content">Active operators increased by 12%. New clearance requests pending Level-03
+                    review. Global talent pool saturation reached.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">BREACH_ATTEMPTS</span>
+                <div class="chart-container-sm"><canvas id="breachChart"></canvas></div>
+                <div class="text-content">14 blocked attempts in the last hour. All signatures identified and
+                    blacklisted from the lattice. No intrusion detected.</div>
+            </div>
+
+            <!-- NEW ANALYTICS: SECTOR DISTRIBUTION & THREAT DENSITY -->
+            <div class="v-panel" style="grid-column: span 6;" id="nodes">
+                <span class="v-label-sm">SECTOR_RESOURCE_DISTRIBUTION</span>
+                <div class="chart-container-sm"><canvas id="sectorChart"></canvas></div>
+                <div class="text-content">Distribution of raw materials across global sectors. Mining output in
+                    Asteroid-7 has peaked. Refinement hubs at 80% efficiency.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">THREAT_DENSITY_MAPPING</span>
+                <div class="chart-container-sm"><canvas id="threatChart"></canvas></div>
+                <div class="text-content">Visualizing potential security hotspots. Sector-G reporting anomalous pings.
+                    Tactical response units prepositioned.</div>
+            </div>
+
+            <!-- NEW: HIGH FULFILLMENT MODULES -->
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">NEURAL_PROPAGATION_WAVES</span>
+                <div class="chart-container-sm"><canvas id="neuralWaveChart"></canvas></div>
+                <div class="text-content">Monitoring the spread of neural commands across the terrestrial lattice.
+                    Propagation speed at 0.98c.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">QUANTUM_ENTANGLEMENT_STABILITY</span>
+                <div class="chart-container-sm"><canvas id="quantumSyncChart"></canvas></div>
+                <div class="text-content">Entanglement parity maintained at 99.98%. No decoherence detected in primary
+                    q-bits.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">SATELLITE_CONSTELLATION_ALIGN</span>
+                <div class="chart-container-sm"><canvas id="satAlignChart"></canvas></div>
+                <div class="text-content">Vanguard-7 constellation reporting perfect zenith alignment. Inter-satellite
+                    laser links active.</div>
+            </div>
+            <div class="v-panel" style="grid-column: span 6;">
+                <span class="v-label-sm">ORBITAL_PHASE_SYNC</span>
+                <div class="chart-container-sm"><canvas id="phaseSyncChart"></canvas></div>
+                <div class="text-content">Zero-phase alignment with the lunar master clock. Orbital jitter at <
+                        0.001ms.</div>
+                </div>
+
+                <div class="command-directive">
+                    <span class="directive-header">COMMAND_DIRECTIVE_ALPHA</span>
+                    <p class="directive-body">
+                        "Maintain absolute dominance over the secondary fabbing sectors. Any deviation in sync quality
+                        exceeding 0.04% must be met with immediate node-reset protocols. We do not negotiate with
+                        entropy."
+                    </p>
+                </div>
+
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">STRATEGIC_RESERVES</span>
+                    <div class="chart-container-sm"><canvas id="inventoryChart"></canvas></div>
+                    <div class="text-content">Titanium and He3 levels at 84%. Backup reserves engaged for Sector 4
+                        expansion. Current burn rate sustainable for 142 cycles.</div>
+                </div>
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">OPERATOR_SENTIMENT</span>
+                    <div class="chart-container-sm"><canvas id="sentimentChart"></canvas></div>
+                    <div class="text-content">Collective operator morale at 89%. High cognitive sync correlation
+                        detected.
+                        Psychological buffers are operational.</div>
+                </div>
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">ORBITAL_DRIFT_DEVIATION</span>
+                    <div class="chart-container-sm"><canvas id="driftChart"></canvas></div>
+                    <div class="text-content">Drift within 0.002mm range. Compensators performing as expected for
+                        Station
+                        Gamma. Gravitational anchors locked.</div>
+                </div>
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">KINETIC_STABILITY_INDEX</span>
+                    <div class="chart-container-sm"><canvas id="kineticChart"></canvas></div>
+                    <div class="text-content">Structural resonance at 0.04Hz. No fatigue detected in primary
+                        load-bearing lattice elements.</div>
+                </div>
+
+                <!-- NEW ANALYTICS: UPTIME CONSISTENCY & HEATMAP -->
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">UPTIME_CONSISTENCY_V3</span>
+                    <div class="chart-container-sm"><canvas id="uptimeChart"></canvas></div>
+                    <div class="text-content">Measured over the last 1000 cycles. Deviation is statistically
+                        insignificant.
+                        Global sync maintained through Level-5 parity.</div>
+                </div>
+                <div class="v-panel" style="grid-column: span 6;">
+                    <span class="v-label-sm">SYSTEM_THERMAL_HEATMAP</span>
+                    <div class="chart-container-sm"><canvas id="heatmapChart"></canvas></div>
+                    <div class="text-content">Real-time heat distribution across the main processing core. Sector-4
+                        reporting 12% higher thermal output due to heavy fabbing load.</div>
+                </div>
+
+                <div class="v-panel" style="grid-column: span 12;">
+                    <span class="v-label">PROCESSING_CYCLE_EFFICIENCY // MULTI-CORE SYNC</span>
+                    <div class="chart-container-md"><canvas id="cycleChart"></canvas></div>
+                </div>
+
+                <!-- Row 4: Regional & Logs -->
+                <div class="v-panel" style="grid-column: span 4;" id="users">
+                    <span class="v-label">REGIONAL_LOAD_DISTRIBUTION</span>
+                    <div class="chart-container-md"><canvas id="regionalLoadChart"></canvas></div>
+                    <div class="text-content" style="margin-top: 25px;">
+                        North America handles 42% of global load. Asia shows rapid growth in edge processing demands
+                        this
+                        cycle.
+                    </div>
+                </div>
+
+                <div class="v-panel" style="grid-column: span 8;" id="security">
+                    <span class="v-label">STRATEGIC_SECURITY_AUDIT_LOGS</span>
+                    <div class="tactical-table-wrapper">
+                        <table class="tactical-table">
+                            <thead>
+                                <tr>
+                                    <th>TIMESTAMP</th>
+                                    <th>OPERATOR_ID</th>
+                                    <th>ACTION</th>
+                                    <th>TARGET_NODE</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="auditLogsBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 1.05rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+    <script>
+        lucide.createIcons();
+
+        Chart.defaults.color = 'rgba(128, 128, 128, 0.9)';
+        Chart.defaults.font.family = 'Space Grotesk, monospace';
+        Chart.defaults.font.size = 10;
+
+        const chartColors = {
+            accent: '#007aff',
+            gold: '#FFD700',
+            success: '#00FF00',
+            danger: '#666666',
+            info: '#00CAFF'
+        };
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(5, 5, 5, 0.9)',
+                    titleFont: { family: 'Space Grotesk' },
+                    bodyFont: { family: 'Space Grotesk' }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    grid: { color: 'rgba(128, 128, 128, 0.2)', borderColor: 'rgba(128, 128, 128, 0.3)' },
+                    ticks: { color: 'rgba(128, 128, 128, 0.95)', font: { weight: '600' } }
+                },
+                y: {
+                    display: true,
+                    grid: { color: 'rgba(128, 128, 128, 0.2)', borderColor: 'rgba(128, 128, 128, 0.3)' },
+                    ticks: { color: 'rgba(128, 128, 128, 0.95)', font: { weight: '600' } }
+                }
+            },
+            elements: { line: { tension: 0.4 }, point: { radius: 3 } }
+        };
+
+        const createLineChart = (id, data, color) => {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [1, 2, 3, 4, 5, 6, 7],
+                    datasets: [{
+                        data: data,
+                        borderColor: color,
+                        borderWidth: 2,
+                        fill: true,
+                        backgroundColor: color + '11',
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: commonOptions
+            });
+        };
+
+        createLineChart('cpuChart', [20, 25, 22, 35, 30, 45, 40], chartColors.accent);
+        createLineChart('memChart', [60, 62, 61, 65, 63, 64, 65], chartColors.gold);
+        createLineChart('trafficChart', [40, 55, 45, 65, 50, 75, 70], chartColors.success);
+
+        new Chart(document.getElementById('latticeChart'), {
+            type: 'radar',
+            data: {
+                labels: ['Stability', 'Efficiency', 'Security', 'Throughput', 'Integrity', 'Uptime'],
+                datasets: [{
+                    data: [95, 88, 100, 92, 85, 99],
+                    borderColor: chartColors.accent,
+                    backgroundColor: chartColors.accent + '33',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        grid: { color: 'rgba(128, 128, 128, 0.4)' },
+                        angleLines: { color: 'rgba(128, 128, 128, 0.4)' },
+                        ticks: { display: false },
+                        pointLabels: {
+                            color: 'rgba(128, 128, 128, 0.9)',
+                            font: { size: 11, weight: '900' }
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('infraHealthChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Healthy', 'Alert', 'Critical'],
+                datasets: [{
+                    data: [85, 10, 5],
+                    backgroundColor: [chartColors.success, chartColors.gold, chartColors.danger],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '80%'
+            }
+        });
+
+        new Chart(document.getElementById('sectorChart'), {
+            type: 'bar',
+            data: {
+                labels: ['S1', 'S2', 'S3', 'S4'],
+                datasets: [{
+                    data: [90, 85, 95, 70],
+                    backgroundColor: chartColors.accent + '88',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { display: false }, y: { display: false } }
+            }
+        });
+
+        createLineChart('userGrowthChart', [10, 30, 25, 45, 60, 55, 80], chartColors.info);
+
+        new Chart(document.getElementById('threatChart'), {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Anomalous Pings',
+                    data: Array.from({ length: 15 }, () => ({
+                        x: Math.round(Math.random() * 100),
+                        y: Math.round(Math.random() * 100),
+                        r: Math.random() * 10 + 5
+                    })),
+                    backgroundColor: chartColors.danger + '44',
+                    borderColor: chartColors.danger,
+                    borderWidth: 2,
+                    hoverBackgroundColor: chartColors.danger
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        min: 0,
+                        max: 100,
+                        grid: commonOptions.scales.x.grid,
+                        ticks: commonOptions.scales.x.ticks
+                    },
+                    y: {
+                        type: 'linear',
+                        min: 0,
+                        max: 100,
+                        grid: commonOptions.scales.y.grid,
+                        ticks: commonOptions.scales.y.ticks
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `Sector Core: [${ctx.raw.x}, ${ctx.raw.y}] | Intensity: ${Math.round(ctx.raw.r)}%`
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('regionalLoadChart'), {
+            type: 'pie',
+            data: {
+                labels: ['NA', 'EU', 'AS', 'AF'],
+                datasets: [{
+                    data: [42, 30, 20, 8],
+                    backgroundColor: [chartColors.accent, chartColors.gold, chartColors.info, chartColors.success],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+
+        // NEW CHARTS
+        new Chart(document.getElementById('uptimeChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 20 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 20 }, () => 99.9 + Math.random() * 0.1),
+                    borderColor: chartColors.success,
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('heatmapChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 20 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 20 }, () => 30 + Math.random() * 10),
+                    borderColor: chartColors.danger,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: chartColors.danger + '11'
+                }]
+            },
+            options: commonOptions
+        });
+
+        const logs = [
+            { time: '[14:02:11]', op: 'ADMIN_01', action: 'KERNEL_FLUSH', node: 'SEC-PRIMARY', status: 'SUCCESS' },
+            { time: '[14:05:42]', op: 'USER_942', action: 'DATA_DUMP', node: 'TOK-009', status: 'DENIED' },
+            { time: '[14:12:05]', op: 'SYS_CORE', action: 'SYNC_ROTATION', node: 'GLOBAL_LAT', status: 'SUCCESS' },
+            { time: '[14:22:15]', op: 'ADMIN_02', action: 'RESET_ORB_04', node: 'ORB-STATION', status: 'SUCCESS' }
+        ];
+
+        const auditBody = document.getElementById('auditLogsBody');
+        logs.forEach(log => {
+            const row = `<tr>
+                <td style="opacity: 0.4">${log.time}</td>
+                <td style="color: var(--v-accent)">${log.op}</td>
+                <td>${log.action}</td>
+                <td style="opacity: 0.6">${log.node}</td>
+                <td style="color: ${log.status === 'SUCCESS' ? '#00FF00' : '#666666'}">${log.status}</td>
+            </tr>`;
+            auditBody.innerHTML += row;
+        });
+
+        // New Admin Charts (Interactive)
+        createLineChart('revenueChart', [80, 85, 90, 88, 92, 95, 94], chartColors.success);
+        createLineChart('breachChart', [5, 12, 8, 15, 6, 20, 10], chartColors.danger);
+
+        new Chart(document.getElementById('inventoryChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Ti', 'He3', 'Al', 'Cu', 'Au'],
+                datasets: [{
+                    label: 'Reserve Level',
+                    data: [84, 92, 75, 88, 95],
+                    backgroundColor: chartColors.gold + '66',
+                    borderColor: chartColors.gold,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                scales: {
+                    x: commonOptions.scales.x,
+                    y: { ...commonOptions.scales.y, beginAtZero: true }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('sentimentChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Positive', 'Neutral', 'Stress'],
+                datasets: [{
+                    data: [70, 20, 10],
+                    backgroundColor: [chartColors.success, chartColors.info, chartColors.danger],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '70%'
+            }
+        });
+
+        createLineChart('latencyHeatChart', [15, 18, 16, 20, 18, 19, 18], chartColors.info);
+        createLineChart('phaseSyncChart', [99.9, 100, 99.8, 100, 99.9, 100, 99.9], chartColors.success);
+        createLineChart('kineticChart', [40, 42, 41, 40, 41, 40, 41], chartColors.accent);
+        createLineChart('driftChart', [2, 1, 3, 2, 2, 1, 2], chartColors.info);
+
+        new Chart(document.getElementById('cycleChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 50 }, (_, i) => i),
+                datasets: [{
+                    label: 'Sync Efficiency',
+                    data: Array.from({ length: 50 }, () => Math.random() * 20 + 80),
+                    borderColor: chartColors.accent,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: chartColors.accent + '11',
+                    pointRadius: 0,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(5, 5, 5, 0.9)',
+                        titleColor: chartColors.accent,
+                        bodyColor: '#fff',
+                        borderColor: chartColors.accent,
+                        borderWidth: 1
+                    }
+                },
+                hover: { mode: 'nearest', intersect: true },
+                scales: {
+                    x: { display: true, grid: { display: false } },
+                    y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+
+        createLineChart('neuralWaveChart', [40, 45, 42, 48, 44, 50, 48], chartColors.accent);
+
+        new Chart(document.getElementById('quantumSyncChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 30 }, (_, i) => i),
+                datasets: [{
+                    label: 'Parity',
+                    data: Array.from({ length: 30 }, () => 99.9 + Math.random() * 0.1),
+                    borderColor: chartColors.gold,
+                    backgroundColor: chartColors.gold + '22',
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.4
+                }]
+            },
+            options: { ...commonOptions, scales: { y: { display: true, min: 99.8, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        });
+
+        new Chart(document.getElementById('satAlignChart'), {
+            type: 'line',
+            data: {
+                labels: ['V-1', 'V-2', 'V-3', 'V-4', 'V-5', 'V-6', 'V-7'],
+                datasets: [{
+                    data: [98.5, 99.2, 97.8, 100, 98.9, 99.5, 99.1],
+                    backgroundColor: chartColors.info + '44',
+                    borderColor: chartColors.info,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { ...commonOptions, scales: { y: { display: true, min: 95, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        });
+
+        // Add interactive data refresh on click for panels
+        document.querySelectorAll('.v-panel').forEach(panel => {
+            panel.style.cursor = 'pointer';
+            panel.addEventListener('click', () => {
+                const canvas = panel.querySelector('canvas');
+                if (!canvas) return;
+                const chart = Chart.getChart(canvas);
+                if (chart) {
+                    chart.data.datasets.forEach(dataset => {
+                        if (dataset.data) {
+                            dataset.data = dataset.data.map(val => typeof val === 'number' ? val * (0.9 + Math.random() * 0.2) : val);
+                        }
+                    });
+                    chart.update('active');
+
+                    // Visual feedback
+                    panel.style.borderColor = chartColors.success;
+                    setTimeout(() => panel.style.borderColor = '', 1000);
+                }
+            });
+        });
+
+        // Custom Tactical Tooltip implementation for a specific chart
+        const cycleCanvas = document.getElementById('cycleChart');
+        cycleCanvas.addEventListener('mousemove', (e) => {
+            // Chart.js handles native tooltips, but we could add more custom HUD elements here
+        });
+    </script>
+</body>
+
+</html>

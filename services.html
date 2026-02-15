@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // PRECISION OVERRIDE</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @media (max-width: 1100px) {
+            header.v-section {
+                padding-bottom: 10px !important;
+                margin-bottom: 0 !important;
+            }
+
+            .vector-section-fix {
+                padding-top: 10px !important;
+            }
+
+            .v-box {
+                height: 400px !important;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+    <div class="scroll-progress"></div>
+
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link mobile-only-link"
+                    style="display: none; font-weight: 800; color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px;">WEBSITE</a>
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link active">Services</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="v-section" style="padding-top: 120px; margin-bottom: 20px;">
+        <div class="reveal-wrap">
+            <span class="label-mono reveal-inner">DEPARTMENT OF KINETICS</span>
+        </div>
+        <h1 class="massive-heading">
+            <div class="reveal-wrap"><span class="reveal-inner outline-text">VECTORS.</span></div>
+        </h1>
+    </header>
+
+    <!-- Vector 01: High Tension Showcase -->
+    <section class="v-section vector-section-fix" style="padding-top: 0;">
+        <div class="v-grid-experimental">
+            <div style="grid-column: span 5; display: flex; flex-direction: column; justify-content: center;">
+                <span class="label-mono">VECTOR // 01</span>
+                <h2 style="font-size: 5rem; font-weight: 800; line-height: 0.9; margin-bottom: 40px;">Orbital
+                    <br>Integrity.
+                </h2>
+                <p style="font-size: 1.35rem; opacity: 0.5; line-height: 1.6;">
+                    Providing the zero-gravity alloy lattices and high-thrust fabbing nodes required for the next
+                    century of deep space infrastructure.
+                </p>
+                <div
+                    style="margin-top: 60px; display: flex; gap: 20px; font-family:var(--font-mono); font-size: 1rem; opacity: 0.4;">
+                    <span>[ ITAR COMPLIANT ]</span>
+                    <span>[ LATTICE SYNC ]</span>
+                </div>
+            </div>
+
+            <div class="v-box reveal-wrap" style="grid-column: span 7; height: 80vh;">
+                <img src="vanguard_aerospace_premium_flat.png" class="reveal-inner">
+            </div>
+        </div>
+    </section>
+
+    <!-- Vector 02: Negative Space Shift -->
+    <section class="v-section">
+        <div class="v-grid-experimental">
+            <div class="v-box reveal-wrap" style="grid-column: span 7; height: 80vh;">
+                <img src="vanguard_tech_premium.png" class="reveal-inner">
+            </div>
+
+            <div
+                style="grid-column: span 4; grid-column-start: 9; display: flex; flex-direction: column; justify-content: flex-end;">
+                <span class="label-mono">VECTOR // 02</span>
+                <h2 style="font-size: 4rem; font-weight: 800; line-height: 0.9; margin-bottom: 40px;">Kinetic
+                    <br>Shielding.
+                </h2>
+                <p style="font-size: 1.25rem; opacity: 0.5; line-height: 1.6;">
+                    Hardened nodes and reactive armor suites designed to protect the sovereign assets of our global
+                    partners against cascading system failures.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vector 03: The Wide Fullscreen Experience -->
+    <section class="v-section">
+        <div class="reveal-wrap">
+            <span class="label-mono reveal-inner"
+                style="text-align: center; width: 100%; display: block; margin-bottom: 40px;">VECTOR // 03</span>
+        </div>
+        <div class="v-box reveal-wrap" style="grid-column: span 12; height: 70vh;">
+            <img src="vanguard_hero_premium.png" class="reveal-inner" style="filter: brightness(0.4) grayscale(1);">
+            <div
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; color: #ffffff !important;">
+                <h2
+                    style="font-size: 8vw; font-weight: 900; letter-spacing: -0.05em; color: #ffffff !important; text-shadow: 0 5px 30px rgba(0,0,0,0.5);">
+                    HYPERSONIC LOGISTICS</h2>
+                <a href="contact.html" class="nav-link"
+                    style="font-size: 1rem; margin-top: 40px; display: inline-block; color: #ffffff !important; opacity: 1;">INITIATE
+                    DATA TRANSMISSION →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: CAPABILITY MATRIX -->
+    <section class="v-section" style="padding-bottom: 20vh;">
+        <div class="v-container">
+            <div style="margin-bottom: 100px;">
+                <span class="label-mono">TECHNICAL_THRESHOLDS</span>
+                <h2 style="font-size: 3.5rem; font-weight: 800; margin-top: 20px;">The Capability <br>Matrix.</h2>
+            </div>
+
+            <div class="v-grid-experimental" style="gap: 1px; background: var(--border);">
+                <div
+                    style="background: var(--bg); padding: 40px; border-bottom: 4px solid var(--gold); grid-column: span 3;">
+                    <span class="label-mono" style="font-size: 1rem; opacity: 0.8;">SECTOR</span>
+                    <h4 style="margin-top: 15px;">AEROSPACE</h4>
+                    <p style="font-size: 1.1rem; opacity: 0.7; margin-top: 20px;">Sub-orbital fabbing and thermal
+                        shielding assets.</p>
+                </div>
+                <div
+                    style="background: var(--bg); padding: 40px; border-bottom: 4px solid var(--accent); grid-column: span 3;">
+                    <span class="label-mono" style="font-size: 1rem; opacity: 0.8;">SECTOR</span>
+                    <h4 style="margin-top: 15px;">DEFENSE</h4>
+                    <p style="font-size: 1.1rem; opacity: 0.7; margin-top: 20px;">Reactive armor suites and hardened
+                        comms nodes.</p>
+                </div>
+                <div
+                    style="background: var(--bg); padding: 40px; border-bottom: 4px solid var(--gold); grid-column: span 3;">
+                    <span class="label-mono" style="font-size: 1rem; opacity: 0.8;">SECTOR</span>
+                    <h4 style="margin-top: 15px;">BIO-TECH</h4>
+                    <p style="font-size: 1.1rem; opacity: 0.7; margin-top: 20px;">Neural interface hardware and precise
+                        med-fabbing.</p>
+                </div>
+                <div
+                    style="background: var(--bg); padding: 40px; border-bottom: 4px solid var(--accent); grid-column: span 3;">
+                    <span class="label-mono" style="font-size: 1rem; opacity: 0.8;">SECTOR</span>
+                    <h4 style="margin-top: 15px;">ENERGY</h4>
+                    <p style="font-size: 1.1rem; opacity: 0.7; margin-top: 20px;">Quantum battery arrays and tokamak
+                        fabbing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: SYSTEM THRESHOLDS -->
+    <section class="v-section" style="padding-top: 0;">
+        <div class="v-container">
+            <div style="margin-bottom: 60px;">
+                <span class="label-mono">KINETIC_PERFORMANCE_METRICS</span>
+                <h2 style="font-size: 2.5rem; font-weight: 800; margin-top: 20px;">System Thresholds.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 40px;">
+                <div style="grid-column: span 4; border: 1px solid var(--border); padding: 30px;">
+                    <span class="label-mono"
+                        style="font-size: 0.95rem; color: var(--gold); opacity: 0.8;">METRIC_01</span>
+                    <h4 style="margin-top: 10px;">Lattice Elasticity</h4>
+                    <pre
+                        style="font-family: var(--font-mono); font-size: 1rem; opacity: 0.8; margin-top: 20px; color: var(--fg);">
+SYNC_RATE: 4.2GHz
+ENTROPY: &lt; 0.001%
+BIAS: ZERO_PT</pre>
+                </div>
+                <div style="grid-column: span 4; border: 1px solid var(--border); padding: 30px;">
+                    <span class="label-mono"
+                        style="font-size: 0.95rem; color: var(--gold); opacity: 0.8;">METRIC_02</span>
+                    <h4 style="margin-top: 10px;">Kinetic Inertia</h4>
+                    <pre
+                        style="font-family: var(--font-mono); font-size: 1rem; opacity: 0.8; margin-top: 20px; color: var(--fg);">
+MASS_SYNC: 100%
+DAMPING: ACTIVE
+RESPONSE: 0.4ms</pre>
+                </div>
+                <div style="grid-column: span 4; border: 1px solid var(--border); padding: 30px;">
+                    <span class="label-mono"
+                        style="font-size: 0.95rem; color: var(--gold); opacity: 0.8;">METRIC_03</span>
+                    <h4 style="margin-top: 10px;">Neural Bandwidth</h4>
+                    <pre
+                        style="font-family: var(--font-mono); font-size: 1rem; opacity: 0.8; margin-top: 20px; color: var(--fg);">
+UPLINK: 420Tbps
+DOWNLINK: 1.2Pbps
+PARITY: FULL</pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: SERVICE SYNC LEVELS -->
+    <section class="v-section" style="background: var(--fg); color: var(--bg); padding: 15vh 0;">
+        <div class="v-container">
+            <div style="text-align: center; margin-bottom: 100px;">
+                <span class="label-mono" style="opacity: 0.6; color: inherit;">SERVICE_ENGAGEMENT</span>
+                <h2 style="font-size: 3.5rem; font-weight: 900;">Choose Your <br>Level of Sync.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 40px;">
+                <div style="grid-column: span 4; border: 1px solid rgba(0,0,0,0.1); padding: 50px;">
+                    <span class="v-stat" style="font-size: 2rem; color: var(--accent);">V1</span>
+                    <h3 style="margin-top: 20px; font-size: 1.5rem;">Foundational</h3>
+                    <p style="font-size: 1rem; opacity: 0.8; margin-top: 20px;">Standard lattice access. Ideal for
+                        secondary industrial nodes and logistics monitoring.</p>
+                </div>
+                <div
+                    style="grid-column: span 4; border: 1px solid rgba(0,0,0,0.1); padding: 50px; background: rgba(0,0,0,0.05);">
+                    <span class="v-stat" style="font-size: 2rem; color: var(--gold);">V2</span>
+                    <h3 style="margin-top: 20px; font-size: 1.5rem;">Institutional</h3>
+                    <p style="font-size: 1rem; opacity: 0.8; margin-top: 20px;">Full-spectrum sync. Authorized for
+                        primary manufacturing hubs and high-tension defense suites.</p>
+                </div>
+                <div style="grid-column: span 4; border: 1px solid rgba(0,0,0,0.1); padding: 50px;">
+                    <span class="v-stat" style="font-size: 2rem; color: var(--accent);">V3</span>
+                    <h3 style="margin-top: 20px; font-size: 1.5rem;">Sovereign</h3>
+                    <p style="font-size: 1rem; opacity: 0.8; margin-top: 20px;">Custom-forged orbital infrastructure.
+                        Dedicated quantum bypass for sovereign state entities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: FABRICATION TIERS -->
+    <section class="v-section" style="padding: 15vh 0;">
+        <div class="v-container">
+            <div style="margin-bottom: 80px;">
+                <span class="label-mono">OUTPUT_CLASSIFICATION</span>
+                <h2 style="font-size: 3.5rem; font-weight: 800; margin-top: 20px;">Fabrication <br>Classes.</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px;">
+                <div style="border-left: 2px solid var(--gold); padding-left: 30px;">
+                    <span class="label-mono" style="color: var(--gold);">CLASS_A // NEURAL</span>
+                    <p style="font-size: 1.05rem; opacity: 0.7; margin-top: 15px; line-height: 1.6;">Atomic-level
+                        fabbing
+                        of neural cores and quantum processing units. Tolerances within &lt;0.001nm. Restricted to
+                        Tier-1 institutional partners.</p>
+                </div>
+                <div style="border-left: 2px solid var(--border); padding-left: 30px;">
+                    <span class="label-mono" style="color: var(--gold);">CLASS_B // KINETIC</span>
+                    <p style="font-size: 1.05rem; opacity: 0.7; margin-top: 15px; line-height: 1.6;">High-inertia
+                        structural alloys and reactive armor suites. Designed for extreme environment shielding and
+                        orbital deployment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: TECHNICAL SPECIFICATIONS GRID -->
+    <section class="v-section" style="background: rgba(255,255,255,0.01); padding: 15vh 0;">
+        <div class="v-container">
+            <div style="margin-bottom: 80px;">
+                <span class="label-mono" style="color: var(--gold);">SERVICE_SPECIFICATIONS</span>
+                <h2 style="font-size: 3rem; font-weight: 800; margin-top: 20px; color: var(--fg) !important;">Technical
+                    <br>Benchmarks.
+                </h2>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table
+                    style="width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-mono); font-size: 1.1rem; border: 1px solid var(--border); color: var(--fg) !important;">
+                    <thead>
+                        <tr style="background: rgba(179, 146, 45, 0.05); border-bottom: 2px solid var(--border);">
+                            <th
+                                style="padding: 24px; opacity: 0.9; font-size: 0.85rem; letter-spacing: 2px; color: var(--fg) !important;">
+                                PARAMETER
+                            </th>
+                            <th style="padding: 24px; color: var(--accent) !important; font-weight: 900;">V1_LOW_SYNC
+                            </th>
+                            <th style="padding: 24px; color: var(--gold) !important; font-weight: 900;">V2_HIGH_SYNC
+                            </th>
+                            <th style="padding: 24px; color: var(--accent) !important; font-weight: 900;">V3_OMNI_SYNC
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">Node Connectivity</td>
+                            <td style="padding: 20px;">Standard Fiber-Mesh</td>
+                            <td style="padding: 20px;">Dedicated Dark-Mesh</td>
+                            <td style="padding: 20px;">Quantum-Locked Uplink</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">Encryption Level</td>
+                            <td style="padding: 20px;">AES-256-GCM</td>
+                            <td style="padding: 20px;">RSA-4096 + Bio-Sync</td>
+                            <td style="padding: 20px;">QS-Postmodern + Parity</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">Latency Limit</td>
+                            <td style="padding: 20px;">&lt; 50ms</td>
+                            <td style="padding: 20px;">&lt; 5ms</td>
+                            <td style="padding: 20px;">&lt; 0.1ms</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">SLA Guarantee</td>
+                            <td style="padding: 20px;">99.9%</td>
+                            <td style="padding: 20px;">99.999%</td>
+                            <td style="padding: 20px;">100.00%</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">Fabrication Speed</td>
+                            <td style="padding: 20px;">Standard Cycle</td>
+                            <td style="padding: 20px;">Accelerated Cycle</td>
+                            <td style="padding: 20px;">Real-time Stream</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border); transition: 0.3s;"
+                            onmouseover="this.style.background='rgba(0,122,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 20px; font-weight: 700;">Global Redundancy</td>
+                            <td style="padding: 20px;">3 Nodes</td>
+                            <td style="padding: 20px;">12 Nodes</td>
+                            <td style="padding: 20px;">Unlimited / Orbital</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: SUPPORT TIERS -->
+    <section class="v-section" style="padding: 15vh 0;">
+        <div class="v-container">
+            <div class="v-grid-experimental vigilance-grid" style="align-items: center;">
+                <div class="vigilance-content">
+                    <span class="label-mono">OPERATIONAL_SUPPORT</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Continuous <br>Vigilance.</h2>
+                    <p style="margin-top: 30px; opacity: 0.5; line-height: 1.8;">
+                        Every Vanguard node is monitored 24/7/365 by our global and orbital command centers. We don't
+                        just react to system alerts; we predict and neutralize divergence before it occurs.
+                    </p>
+                    <div class="vigilance-list"
+                        style="margin-top: 40px; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="checklist-item" style="display: flex; gap: 20px; align-items: center;">
+                            <i data-lucide="check-circle" style="color: var(--gold); width: 20px;"></i>
+                            <span style="font-size: 1.05rem;">Predictive Maintenance Modeling</span>
+                        </div>
+                        <div class="checklist-item" style="display: flex; gap: 20px; align-items: center;">
+                            <i data-lucide="check-circle" style="color: var(--gold); width: 20px;"></i>
+                            <span style="font-size: 1.05rem;">Autonomous Cooling Cycles</span>
+                        </div>
+                        <div class="checklist-item" style="display: flex; gap: 20px; align-items: center;">
+                            <i data-lucide="check-circle" style="color: var(--gold); width: 20px;"></i>
+                            <span style="font-size: 1.05rem;">Sub-Atomic Integrity Surveys</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="support-dashboard"
+                    style="background: #0a0a0a; border: 1px solid var(--border); padding: 60px; color: #ffffff !important;">
+                    <div class="label-mono"
+                        style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px; color: var(--gold) !important;">//
+                        REALTIME_SUPPORT_DASHBOARD</div>
+                    <div style="height: 300px; display: flex; flex-direction: column; justify-content: space-around;">
+                        <div
+                            style="height: 10px; width: 100%; background: var(--border); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 84%; height: 100%; background: var(--accent);"></div>
+                        </div>
+                        <div
+                            style="height: 10px; width: 100%; background: var(--border); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 92%; height: 100%; background: var(--gold);"></div>
+                        </div>
+                        <div
+                            style="height: 10px; width: 100%; background: var(--border); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 70%; height: 100%; background: var(--accent);"></div>
+                        </div>
+                    </div>
+                    <p
+                        style="font-size: 1.05rem; opacity: 0.8; margin-top: 30px; text-align: center; color: #ffffff !important;">
+                        Average Response
+                        Time: 12.4 Seconds (Global Average)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: INSTITUTIONAL SLA -->
+    <section class="v-section" style="background: #0a0a0a; padding: 10vh 0; border-top: 1px solid var(--border);">
+        <div class="v-container">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 40px;">
+                <div>
+                    <span class="label-mono">CONTRACTUAL_CERTAINTY</span>
+                    <h2 style="font-size: 2rem; margin-top: 10px;">The Vanguard <br>Guarantee.</h2>
+                </div>
+                <div style="display: flex; gap: 60px;">
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--gold);">0.00%</div>
+                        <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">SYNC_FAILURE_SLA</span>
+                    </div>
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--gold);">100%</div>
+                        <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">DATA_SOVEREIGNTY</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: INDUSTRIAL ARCHITECTURE -->
+    <section class="v-section" style="padding: 15vh 0; background: rgba(255,255,255,0.02);">
+        <div class="v-container">
+            <div class="v-grid-experimental" style="align-items: center;">
+                <div style="grid-column: span 6;">
+                    <span class="label-mono">SERVICE_04 // ARCHITECTURE</span>
+                    <h2 style="font-size: 3.5rem; margin-top: 20px;">Industrial <br>Architecture.</h2>
+                    <p style="margin-top: 30px; opacity: 0.5; line-height: 1.8;">
+                        We don't just furnish the lattice; we design the physical shells that house it. Our
+                        architectural wing specializes in high-integrity structures capable of withstanding
+                        seismic, thermal, and kinetic disruption events of magnitude 10 and above.
+                    </p>
+                    <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h5 style="font-size: 0.85rem; color: var(--gold); margin-bottom: 10px;">REINFORCED_CORE
+                            </h5>
+                            <p style="font-size: 0.9rem; opacity: 0.4;">Crystalline alloy reinforcement with active
+                                vibration damping suites.</p>
+                        </div>
+                        <div>
+                            <h5 style="font-size: 0.85rem; color: var(--gold); margin-bottom: 10px;">THERMAL_SHROUD</h5>
+                            <p style="font-size: 0.9rem; opacity: 0.4;">Multi-layer ceramic shielding for extreme
+                                environment stability.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="v-box reveal-wrap" style="grid-column: span 6; height: 50vh;">
+                    <img src="industrial_architect_premium_1769349817206.png" class="reveal-inner">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: QUANTUM LOGISTICS -->
+    <section class="v-section" style="padding: 15vh 0;">
+        <div class="v-container">
+            <div style="text-align: right; margin-bottom: 80px;">
+                <span class="label-mono">SERVICE_05 // LOGISTICS</span>
+                <h2 style="font-size: 3.5rem; margin-top: 20px;">Quantum <br>Logistics.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 40px;">
+                <div class="v-card reveal-wrap service-card-centered"
+                    style="grid-column: span 4; border-top: 2px solid var(--gold);">
+                    <i data-lucide="truck" style="width: 24px; color: var(--gold); margin-bottom: 20px;"></i>
+                    <h4 style="margin-bottom: 15px;">Secure Transit</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6;">Automated drone corridors and
+                        high-security kinetic couriers for physical asset distribution.</p>
+                </div>
+                <div class="v-card reveal-wrap service-card-centered"
+                    style="grid-column: span 4; border-top: 2px solid var(--accent);">
+                    <i data-lucide="package" style="width: 24px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h4 style="margin-bottom: 15px;">Smart Storage</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6;">Cryogenic and vacuum-sealed storage
+                        nodes for sensitive metallurgical components.</p>
+                </div>
+                <div class="v-card reveal-wrap service-card-centered"
+                    style="grid-column: span 4; border-top: 2px solid var(--gold);">
+                    <i data-lucide="refresh-cw" style="width: 24px; color: var(--gold); margin-bottom: 20px;"></i>
+                    <h4 style="margin-bottom: 15px;">Lattice Sync</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6;">Real-time inventory tracking
+                        synchronized via the Vanguard global neural lattice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: STRATEGIC CONSULTING -->
+    <section class="v-section" style="background: var(--fg); color: var(--bg); padding: 15vh 0;">
+        <div class="v-container">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <span class="label-mono" style="opacity: 0.6; color: inherit;">SERVICE_06 // CONSULTING</span>
+                <h2 style="font-size: 4rem; font-weight: 900; margin-top: 30px; line-height: 1;">Strategic
+                    <br>Sovereignty Consulting.
+                </h2>
+                <p style="margin-top: 40px; font-size: 1.35rem; line-height: 1.8; opacity: 0.8;">
+                    We advise institutional partners on the transition to autonomous fabbing and
+                    high-tension infrastructure. Our consultants are experts in kinetic legislation,
+                    neural ethics, and orbital supply chain management.
+                </p>
+                <div style="margin-top: 60px; display: flex; gap: 40px; justify-content: center;">
+                    <div>
+                        <div class="v-stat" style="font-size: 2.5rem; color: var(--bg);">40+</div>
+                        <span class="label-mono" style="font-size: 0.75rem; opacity: 0.5;">YEARS_EXP</span>
+                    </div>
+                    <div>
+                        <div class="v-stat" style="font-size: 2.5rem; color: var(--bg);">142</div>
+                        <span class="label-mono" style="font-size: 0.75rem; opacity: 0.5;">CASE_STUDIES</span>
+                    </div>
+                </div>
+                <a href="contact.html" class="v-button"
+                    style="background: var(--bg); color: var(--fg); margin: 60px auto 0; padding: 25px 50px; width: fit-content;">
+                    <span>Schedule Executive Briefing</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 1.05rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // REQUEST ACCESS</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="auth-wrap">
+        <div class="auth-circle"></div>
+
+        <div class="auth-panel v-reveal">
+            <span class="v-label">SYSTEM_REGISTRATION // NEW_OPERATOR</span>
+            <h2 style="margin: 20px 0 30px; font-size: 2.5rem; letter-spacing: -1px;">INITIALIZE.</h2>
+            <p style="font-size: 0.85rem; opacity: 0.5; margin-bottom: 40px; line-height: 1.6;">
+                Welcome to the Sentinel Core. As a new operator, you will be granted access to the global industrial
+                lattice. Please provide your institutional credentials to begin the synchronization process.
+            </p>
+
+            <form action="dashboard-user.html">
+                <input type="text" placeholder="OPERATOR_NAME" class="auth-input" required>
+                <input type="email" placeholder="COMMS_ID // EMAIL" class="auth-input" required>
+                <input type="password" placeholder="SECURE_KEY // PASSWORD" class="auth-input" required>
+                <button type="submit" class="v-button" style="width: 100%; margin-top: 20px;">
+                    <span>GENERATE OPERATOR ID</span>
+                </button>
+            </form>
+
+            <div style="margin-top: 40px; border-top: 1px solid var(--v-border); padding-top: 30px;">
+                <span class="v-label" style="font-size: 0.5rem; opacity: 0.5;">ACTIVE_SECURITY_PROTOCOLS</span>
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.6rem; opacity: 0.4; font-family: var(--font-mono);">
+                    <span>[ BIO_METRIC_S2 ]</span>
+                    <span>[ RSA_4096 ]</span>
+                    <span>[ QUANTUM_SAFE ]</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 15px;">
+                <p style="font-size: 0.6rem; opacity: 0.5; font-family: var(--font-mono);">
+                    [ NOTICE: AUTHORIZED REFERRAL REQUIRED FOR ACCESS ]
+                </p>
+                <a href="login.html" class="nav-link" style="font-size: 0.6rem; opacity: 1; color: var(--accent);">[
+                    ALREADY_CLEARED // LOGIN ]</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 0.9rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 0.7rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.6rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

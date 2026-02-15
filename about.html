@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // INSTITUTIONAL LEGACY</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .split-experience {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .visual-anchor {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            height: 60vh;
+            overflow: hidden;
+            background: #000;
+            z-index: 0;
+        }
+
+        .visual-anchor img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.5) grayscale(1);
+            transition: 0.8s var(--ease);
+        }
+
+        /* Sync Progress Overlay */
+        .sync-progress-sidebar {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 5;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .sync-dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 15px var(--gold);
+        }
+
+        .sync-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .sync-dot.active::after {
+            opacity: 0.5;
+        }
+
+        .content-scroll {
+            padding: 3vh 0;
+            margin-top: calc(100px + 60vh);
+            background: var(--bg);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 -50px 100px rgba(0, 0, 0, 0.9);
+            width: 100%;
+        }
+
+        .content-padding {
+            padding-inline: var(--gutter);
+        }
+
+        .timeline-mark {
+            margin-bottom: 2vh;
+        }
+
+        .year-massive {
+            font-size: 6vw;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .visual-anchor {
+                position: relative !important;
+                height: 300px !important;
+                top: 0 !important;
+                z-index: 5;
+            }
+
+            .content-scroll {
+                margin-top: 0 !important;
+                padding: 40px 0 !important;
+                box-shadow: none !important;
+                position: relative;
+                z-index: 10;
+            }
+
+            .timeline-mark {
+                margin-bottom: 5vh;
+            }
+
+            .year-massive {
+                font-size: 25vw;
+            }
+        }
+
+        .full-width-section {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            margin-left: -50vw;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 50px 0;
+            margin-bottom: 2vh;
+        }
+
+        [data-theme="light"] .full-width-section {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        @media (max-width: 900px) {
+            .full-width-section {
+                padding: 60px 0;
+            }
+
+            .full-width-section .v-container {
+                padding: 0 var(--gutter);
+                grid-template-columns: 1fr !important;
+                gap: 50px !important;
+            }
+        }
+
+        .v-graph-grid {
+            margin-top: 30px;
+            height: 160px;
+            display: grid !important;
+            grid-template-columns: repeat(12, 1fr) !important;
+            gap: 4px !important;
+            align-items: end;
+        }
+
+        .council-member-img {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+        }
+
+        .schematic-box {
+            aspect-ratio: 16/9;
+            background: #111;
+            border: 1px solid var(--border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff !important;
+        }
+
+        .schematic-box h4,
+        .schematic-box .label-mono {
+            color: #fff !important;
+        }
+
+        [data-theme="light"] .schematic-box {
+            background: #f5f5f7;
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #111 !important;
+        }
+
+        [data-theme="light"] .schematic-box h4,
+        [data-theme="light"] .schematic-box .label-mono {
+            color: #111 !important;
+        }
+
+        .timeline-mark {
+            margin-bottom: 2vh;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+            text-align: center;
+            max-width: 1000px;
+            margin-inline: auto;
+        }
+
+        .side-visual-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-visual-meta::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--gold);
+        }
+
+        .side-visual-img {
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+            filter: grayscale(1) brightness(0.8);
+            transition: 0.5s;
+        }
+
+        .side-visual-img:hover {
+            filter: grayscale(0) brightness(1);
+        }
+
+        @media (max-width: 1200px) {
+            .timeline-mark {
+                gap: 30px;
+            }
+
+            .side-visual-meta {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link mobile-only-link"
+                    style="display: none; font-weight: 800; color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px;">WEBSITE</a>
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link active">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="split-experience">
+        <div class="visual-anchor">
+            <div class="sync-progress-sidebar">
+                <div class="sync-dot active" data-label="GENESIS_01"></div>
+                <div class="sync-dot" data-label="NODE_STABILITY"></div>
+                <div class="sync-dot" data-label="NEURAL_CORRE_ALPHA"></div>
+                <div class="sync-dot" data-label="GLOBAL_LATTICE"></div>
+                <div class="sync-dot" data-label="SOVEREIGN_SENTINEL"></div>
+            </div>
+            <img src="vanguard_foundry_premium.png" class="parallax-layer" data-speed="0.1">
+            <div
+                style="position: absolute; bottom: 40px; left: 40px; font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.3; letter-spacing: 2px;">
+                STATION_ALPHA // FOUNDRY_FEED_READY
+            </div>
+        </div>
+
+        <div class="content-scroll">
+            <div class="full-width-section reveal-wrap">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto; text-align: center;">
+                    <span class="label-mono reveal-inner">CHAPTER ONE // THE GENESIS</span>
+                    <h1 style="font-size: 4rem; font-weight: 800; margin: 20px 0;">The Silent <br>Titan.</h1>
+                    <p
+                        style="font-size: 1.8rem; opacity: 0.8; line-height: 1.6; max-width: 800px; margin-left: auto; margin-right: auto;">
+                        Founded in 1985 on the principles of extreme metallurgical reliability and sovereign industrial
+                        sync. We did not build a company; we built a standard.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-mark reveal-wrap content-padding">
+                <div class="year-massive">1985</div>
+                <h2 style="font-size: 2.2rem; font-weight: 700;">Establishment of <br>Node-01.</h2>
+                <p style="opacity: 0.6; margin-top: 15px; font-size: 1.35rem;">
+                    The first high-security manufacturing node synchronized via theoretical quantum protocols.
+                </p>
+            </div>
+
+            <div class="timeline-mark reveal-wrap content-padding">
+                <div class="year-massive">2005</div>
+                <h2 style="font-size: 2.2rem; font-weight: 700;">Neutral Core <br>Integration.</h2>
+                <p style="opacity: 0.6; margin-top: 15px; font-size: 1.35rem;">
+                    Transition to fully autonomous kinetic distribution networks powered by Sentinel Neural Core.
+                </p>
+            </div>
+
+            <div class="timeline-mark reveal-wrap content-padding">
+                <div>
+                    <div class="year-massive">2026</div>
+                    <h2 style="font-size: 2.2rem; font-weight: 700;">Global Sovereignty.</h2>
+                    <p style="opacity: 0.6; margin-top: 15px; font-size: 1.35rem;">
+                        SENTINEL Industries reaches 99.999% global lattice uptime across 142 sovereign industrial nodes.
+                    </p>
+                </div>
+                <div class="side-visual-meta">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <span>LATTICE_INTEGRITY</span>
+                        <span style="color: var(--gold);">99.999%</span>
+                    </div>
+                    <div style="height: 2px; background: var(--border); margin-bottom: 20px; position: relative;">
+                        <div
+                            style="position: absolute; left: 0; top: 0; height: 100%; width: 99%; background: var(--gold);">
+                        </div>
+                    </div>
+                    <p style="font-size: 0.7rem; opacity: 0.4;">REALTIME_SYNC // 142_NODES_ACTIVE</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 1vh;">
+                <a href="contact.html" class="nav-link" style="font-size: 1.35rem;">PARTNER WITH LEGACY →</a>
+            </div>
+
+            <!-- NEW SECTION: LEADERSHIP NEXUS -->
+            <div class="timeline-mark reveal-wrap" style="margin-top: 1vh;">
+                <div>
+                    <span class="label-mono reveal-inner">EXECUTIVE_NEXUS</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">The Architects.</h2>
+                    <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 20px;">
+                        <div style="border-left: 2px solid var(--gold); padding-left: 20px;">
+                            <h4 style="font-size: 1.35rem;">DIRECTOR_ALPHONSUS_V</h4>
+                            <span class="label-mono"
+                                style="font-size: 0.75rem; opacity: 0.5;">CHIEF_KINETIC_OFFICER</span>
+                        </div>
+                        <div style="border-left: 2px solid var(--border); padding-left: 20px;">
+                            <h4 style="font-size: 1.35rem;">DR. ELARA_SYNC</h4>
+                            <span class="label-mono"
+                                style="font-size: 0.75rem; opacity: 0.5;">HEAD_OF_NEURAL_INFRASTRUCTURE</span>
+                        </div>
+                        <div style="border-left: 2px solid var(--border); padding-left: 20px;">
+                            <h4 style="font-size: 1.35rem;">COMMANDER_JULIUS_ZERO</h4>
+                            <span class="label-mono"
+                                style="font-size: 0.75rem; opacity: 0.5;">GLOBAL_SECURITY_COORDINATOR</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <img src="architect_schematic.png" class="side-visual-img" alt="Neural Core Schematic">
+                    <div
+                        style="margin-top: 15px; font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.3; text-align: right;">
+                        FIG_04 // NEURAL_CORE_UNIT_V.4
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: OUR PHILOSOPHY -->
+            <!-- NEW SECTION: OUR PHILOSOPHY -->
+            <div class="full-width-section reveal-wrap">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">CORE_PRINCIPLES</span>
+                    <h2 style="font-size: 2.5rem; margin-top: 10px;">Absolute <br>Certainty.</h2>
+                    <p
+                        style="margin-top: 15px; opacity: 0.5; line-height: 1.8; max-width: 800px; margin-left: auto; margin-right: auto; text-align: center;">
+                        In an age of variable output, Sentinel provides the immutable constant. Our philosophy is rooted
+                        in
+                        three non-negotiable vectors that define the standard of industrial excellence.
+                    </p>
+                    <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <span class="label-mono" style="color: var(--gold);">01 // SOVEREIGNTY</span>
+                            <p style="font-size: 1.25rem; opacity: 0.6; margin-top: 10px;">Absolute control over the
+                                structural fabric of every industrial node. We do not delegate security; we embody it
+                                through every layer of our hardware-software stack.</p>
+                        </div>
+                        <div>
+                            <span class="label-mono" style="color: var(--gold);">02 // SYNC</span>
+                            <p style="font-size: 1.25rem; opacity: 0.6; margin-top: 10px;">Real-time quantum
+                                coordination
+                                across institutional and orbital boundaries. Our lattice is a single living organism
+                                with
+                                zero-latency synchronization protocols.</p>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <span class="label-mono" style="color: var(--gold);">03 // PRECISION</span>
+                            <p style="font-size: 1.25rem; opacity: 0.6; margin-top: 10px;">Every output is measured
+                                against
+                                sub-micron standards. If it is not perfect, it does not exist in the Sentinel catalog.
+                            </p>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <span class="label-mono" style="color: var(--gold);">04 // LEGACY</span>
+                            <p style="font-size: 1.25rem; opacity: 0.6; margin-top: 10px;">We build for the centuries.
+                                Our
+                                infrastructure is designed for indefinite survival and continuous evolution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: SUSTAINABILITY PROTOCOL -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">ECOLOGICAL_EQUILIBRIUM</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Zero-Point <br>Waste.</h2>
+                    <p style="margin-top: 30px; opacity: 0.6; line-height: 1.8; font-size: 1.35rem;">
+                        True industrial supremacy requires perfect efficiency. The Sentinel "Zero-Point" protocol
+                        ensures
+                        that every gram of material entered into our lattice is accounted for, recycled, or repurposed
+                        with
+                        99.98% efficiency.
+                    </p>
+                    <div style="margin-top: 40px; display: flex; gap: 60px;">
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--gold);">99.9%</div>
+                            <span class="label-mono"
+                                style="font-size: 0.7rem; opacity: 0.4;">MATERIAL_CLOSED_LOOP</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--gold);">0.00</div>
+                            <span class="label-mono"
+                                style="font-size: 0.7rem; opacity: 0.4;">ATMOSPHERIC_IMPACT_SCORE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: GLOBAL INFRASTRUCTURE ATLAS -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">GEOGRAPHICAL_FOOTPRINT</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Infrastructure <br>Atlas.</h2>
+                    <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div
+                            style="background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                            <span class="label-mono" style="font-size: 0.7rem; color: var(--gold);">NORTH_AMERICA</span>
+                            <h4 style="margin-top: 10px; font-size: 1.35rem;">The Forge (Seattle)</h4>
+                            <p style="font-size: 1.15rem; opacity: 0.6; margin-top: 10px;">Primary research node for
+                                neural-kinetic integration. 1.2M sq. ft of high-security lab space.</p>
+                        </div>
+                        <div
+                            style="background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                            <span class="label-mono"
+                                style="font-size: 0.7rem; color: var(--gold);">EUROPE_CENTRAL</span>
+                            <h4 style="margin-top: 10px; font-size: 1.35rem;">Vanguard Berlin</h4>
+                            <p style="font-size: 1.15rem; opacity: 0.6; margin-top: 10px;">Global synchronization hub.
+                                Handles 40% of the worldwide lattice traffic via dedicated fiber-mesh.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: TECHNICAL FOCUS -->
+            <div class="full-width-section reveal-wrap">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">R&D_VECTORS</span>
+                    <h2 style="font-size: 2.5rem; margin-top: 10px;">Future <br>Synthesis.</h2>
+                    <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+                            <div>
+                                <h4 style="font-size: 1.5rem;">QUANTUM_DAMPING</h4>
+                                <p style="font-size: 1.25rem; opacity: 0.7; margin-top: 5px;">Minimizing signal entropy
+                                    in
+                                    high-intensity kinetic environments.</p>
+                            </div>
+                            <span class="label-mono" style="color: var(--gold);">94%_OPTIMIZED</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+                            <div>
+                                <h4 style="font-size: 1.5rem;">BIO_KINETIC_SYNC</h4>
+                                <p style="font-size: 1.25rem; opacity: 0.7; margin-top: 5px;">Bridging the gap between
+                                    organic intent and mechanical output.</p>
+                            </div>
+                            <span class="label-mono" style="color: var(--gold);">LEVEL_04_ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: ARCHITECTURAL SCHEMATICS -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">FACILITY_BLUEPRINTS</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Structural <br>Integrity.</h2>
+                    <div style="margin-top: 40px; border: 1px solid var(--border); position: relative;">
+                        <img src="industrial_architect_premium_1769349817206.png"
+                            style="width: 100%; height: 500px; object-fit: cover; filter: grayscale(1) brightness(0.6); display: block;">
+
+                        <div
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <div
+                                style="position: absolute; top: 30px; left: 30px; border: 1px solid var(--gold); padding: 10px 20px; background: rgba(0,0,0,0.6);">
+                                <span class="label-mono"
+                                    style="font-size: 0.75rem; color: var(--gold);">MASTER_BLUEPRINT</span>
+                                <div style="font-size: 1.35rem; font-weight: 700; color: #fff;">FACILITY_ARC_01</div>
+                            </div>
+
+                            <div style="position: absolute; bottom: 30px; right: 30px; text-align: right;">
+                                <span class="label-mono"
+                                    style="font-size: 0.95rem; color: #fff; opacity: 1; font-weight: 700;">STRUCTURAL_LOAD</span>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">94.2%</div>
+                            </div>
+
+                            <!-- Grid Lines -->
+                            <div
+                                style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1);">
+                            </div>
+                            <div
+                                style="position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: rgba(255,255,255,0.1);">
+                            </div>
+
+                            <!-- Center Target -->
+                            <div
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; border: 1px dashed rgba(255,255,255,0.3); border-radius: 50%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        style="margin-top: 20px; display: flex; justify-content: space-between; font-size: 1.05rem; opacity: 0.7;">
+                        <div>/// SEISMIC_TOLERANCE_TEST_PASSED</div>
+                        <div>APPROVED_BY: ARCHITECT_THORNE</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: ETHICAL SOVEREIGNTY -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">ETHICAL_FRAMEWORK</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">The Doctrine of <br>Neutrality.</h2>
+                    <p style="margin-top: 30px; opacity: 0.6; line-height: 1.8; font-size: 1.35rem;">
+                        Vanguard operates beyond the traditional boundaries of political entropy. Our commitment to
+                        "Sovereign Neutrality" ensures that our infrastructure remains a constant, regardless of
+                        terrestrial fluctuations. We do not take sides; we provide the foundation upon which order is
+                        built.
+                    </p>
+                    <div
+                        style="margin-top: 50px; border: 1px solid var(--border); padding: 40px; background: rgba(255,255,255,0.01);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <span class="label-mono" style="font-size: 0.75rem; color: var(--gold);">CLAUSE_8.4 //
+                                NON_INTERFERENCE</span>
+                            <div style="width: 40px; height: 1px; background: var(--gold); opacity: 0.3;"></div>
+                        </div>
+                        <p style="font-size: 1.05rem; font-style: italic; opacity: 0.6; line-height: 1.6;">
+                            "Vanguard assets shall not be utilized for the destabilization of any recognized sovereign
+                            node.
+                            Our kinetic output is strictly defensive and stabilizing in nature."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: GLOBAL OPERATIONS NEXUS -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">OPERATIONAL_REACH</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Global Operations <br>Nexus.</h2>
+                    <div style="margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                        <div
+                            style="text-align: center; padding: 30px; border: 1px solid var(--border); background: var(--v-gray-deep);">
+                            <i data-lucide="globe"
+                                style="width: 30px; height: 30px; color: var(--gold); margin-bottom: 20px;"></i>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 10px;">TERRESTRIAL</h4>
+                            <div class="v-stat" style="font-size: 1.5rem;">142</div>
+                            <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">SOVEREIGN_NODES</span>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 30px; border: 1px solid var(--border); background: var(--v-gray-deep);">
+                            <i data-lucide="satellite"
+                                style="width: 30px; height: 30px; color: var(--accent); margin-bottom: 20px;"></i>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 10px;">ORBITAL</h4>
+                            <div class="v-stat" style="font-size: 1.5rem;">24</div>
+                            <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">FABBING_STATIONS</span>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 30px; border: 1px solid var(--border); background: var(--v-gray-deep);">
+                            <i data-lucide="anchor"
+                                style="width: 30px; height: 30px; color: var(--gold); margin-bottom: 20px;"></i>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 10px;">ABYSSAL</h4>
+                            <div class="v-stat" style="font-size: 1.5rem;">08</div>
+                            <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">DEEP_SEA_HUBS</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 40px; opacity: 0.6; line-height: 1.8; font-size: 1.25rem;">
+                        From the cold vacuum of LEO to the crushing pressures of the Mariana Trench, the Vanguard
+                        lattice
+                        is the only infrastructure capable of absolute survival in every conceivable human environment.
+                    </p>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: INSTITUTIONAL ARCHIVE -->
+            <div class="full-width-section reveal-wrap" style="margin-top: 2vh; padding-bottom: 1vh;">
+                <div class="v-container" style="max-width: 1200px; margin: 0 auto;">
+                    <span class="label-mono reveal-inner">DATA_SOVEREIGNTY</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Institutional <br>Archive.</h2>
+                    <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 60px;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 30px; border: 1px solid var(--border);">
+                            <h4 style="margin-bottom: 20px; font-size: 1.5rem;">Protocol 04-X</h4>
+                            <p style="font-size: 1.25rem; opacity: 0.7; line-height: 1.6;">
+                                Every byte of operational data generated within the lattice is encrypted with our
+                                proprietary "Quantum-Shredder" protocol, ensuring that history is preserved only
+                                by those with the biometric authority to view it.
+                            </p>
+                        </div>
+                        <div
+                            style="background: rgba(0,0,0,0.8); padding: 30px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 1.05rem;">
+                            <div
+                                style="color: var(--gold); font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                                [ ARCHIVE_QUERY_v4.2 ]</div>
+                            <div style="color: #ffffff; opacity: 0.8; line-height: 1.8;">
+                                > Searching for record: 1985_GENESIS...<br>
+                                > Match found: Node-01 Activation Sequence.<br>
+                                > Access restricted to LEVEL_09 and above.<br>
+                                > Handshake initiated...<br>
+                                > Status: Awaiting Authorizer...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW SECTION: SOVEREIGN ADVISORY COUNCIL (FULL WIDTH) -->
+            <div class="full-width-section reveal-wrap">
+                <div class="v-container"
+                    style="max-width: 1400px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 100px; align-items: center;">
+                    <div>
+                        <span class="label-mono reveal-inner">STRATEGIC_GOVERNANCE</span>
+                        <h2 style="font-size: clamp(3rem, 6vw, 4.5rem); margin-top: 20px; line-height: 0.9;">Advisory
+                            <br>Council.
+                        </h2>
+                        <p
+                            style="margin-top: 40px; opacity: 0.7; max-width: 450px; line-height: 1.8; font-size: 1.35rem;">
+                            The high-command advisory body responsible for the ethical and strategic alignment of the
+                            Sentinel lattice across terrestrial and orbital spheres.
+                        </p>
+
+                        <div style="margin-top: 60px; display: flex; flex-direction: column; gap: 40px;">
+                            <div style="display: flex; gap: 40px; align-items: flex-start;">
+                                <img src="ambassador_kaine.png" class="council-member-img" alt="Ambassador Kaine">
+                                <div style="flex: 1;">
+                                    <span class="label-mono"
+                                        style="font-size: 0.7rem; color: var(--gold);">CHAIR_01</span>
+                                    <h4 style="font-size: 1.3rem; margin-top: 5px;">Ambassador Kaine</h4>
+                                    <p style="font-size: 1.15rem; opacity: 0.6; margin-top: 10px;">Liaison for Sovereign
+                                        State Sync. Focuses on cross-border kinetic legislation.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 40px; align-items: flex-start;">
+                                <img src="archivist_thorne.png" class="council-member-img" alt="Archivist Thorne">
+                                <div style="flex: 1;">
+                                    <span class="label-mono"
+                                        style="font-size: 0.7rem; color: var(--gold);">CHAIR_02</span>
+                                    <h4 style="font-size: 1.3rem; margin-top: 5px;">Archivist Thorne</h4>
+                                    <p style="font-size: 1.15rem; opacity: 0.6; margin-top: 10px;">Chief of
+                                        Institutional History. Oversees the preservation of the Vanguard standard.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REFINED CONTENT: COUNCIL MONITORING PANEL (VISIBLE ON MOBILE) -->
+                    <div class="reveal-wrap"
+                        style="border: 1px solid var(--border); padding: 30px; background: var(--v-gray-deep); position: relative; overflow: hidden; width: 100%; box-sizing: border-box;">
+                        <span class="label-mono" style="font-size: 0.7rem; opacity: 0.4;">SOVEREIGN_NODE_MONITOR</span>
+                        <div class="v-graph-grid">
+                            <!-- Animated data bars -->
+                            <div style="height: 40%; background: var(--gold); opacity: 0.3;"></div>
+                            <div style="height: 60%; background: var(--gold); opacity: 0.15;"></div>
+                            <div style="height: 85%; background: var(--gold); opacity: 0.45;"></div>
+                            <div style="height: 30%; background: var(--gold); opacity: 0.25;"></div>
+                            <div style="height: 70%; background: var(--gold); opacity: 0.55;"></div>
+                            <div style="height: 95%; background: var(--gold); opacity: 0.35;"></div>
+                            <div style="height: 50%; background: var(--gold); opacity: 0.15;"></div>
+                            <div style="height: 80%; background: var(--gold); opacity: 0.45;"></div>
+                            <div style="height: 40%; background: var(--gold); opacity: 0.25;"></div>
+                            <div style="height: 60%; background: var(--gold); opacity: 0.55;"></div>
+                            <div style="height: 90%; background: var(--gold); opacity: 0.35;"></div>
+                            <div style="height: 55%; background: var(--gold); opacity: 0.15;"></div>
+                        </div>
+                        <div
+                            style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 25px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                            <div>
+                                <div style="font-size: 1.35rem; font-weight: 700;">142 / 142</div>
+                                <span class="label-mono" style="font-size: 0.65rem; opacity: 0.3;">ACTIVE_NODES</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.35rem; font-weight: 700; color: #00FF00;">NOMINAL</div>
+                                <span class="label-mono" style="font-size: 0.65rem; opacity: 0.3;">SYNC_STATUS</span>
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top: 20px; font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.3; line-height: 1.6;">
+                            > AUTH_HANDSHAKE: SUCCESSFUL<br>
+                            > BIOMETRIC_FINGERPRINT: VERIFIED<br>
+                            > CLEARANCE_LEVEL: SOVEREIGN_COMMAND
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 1.05rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 0.7rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+    <script>
+        // Scroll Sync Logic for Dots
+        window.addEventListener('scroll', () => {
+            const marks = document.querySelectorAll('.timeline-mark');
+            const dots = document.querySelectorAll('.sync-dot');
+            let current = 0;
+
+            marks.forEach((mark, index) => {
+                const rect = mark.getBoundingClientRect();
+                if (rect.top < window.innerHeight / 2) {
+                    current = index;
+                }
+            });
+
+            dots.forEach((dot, index) => {
+                if (index === current) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

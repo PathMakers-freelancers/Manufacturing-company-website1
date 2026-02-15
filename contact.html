@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // SECURE UPLINK</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .uplink-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 80vh;
+            background: var(--v-gray-deep);
+            border: 1px solid var(--v-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 100px;
+        }
+
+        .uplink-form {
+            padding: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .uplink-visual {
+            position: relative;
+            background: var(--v-black);
+        }
+
+        .uplink-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+        }
+
+        .uplink-overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+        }
+
+        .uplink-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--v-border);
+            padding: 15px 0;
+            color: white;
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            transition: 0.3s;
+        }
+
+        .uplink-input:focus {
+            outline: none;
+            border-color: var(--v-accent);
+        }
+
+        .node-strip {
+            display: flex;
+            justify-content: space-between;
+            background: var(--v-gray);
+            padding: 15px 40px;
+            border: 1px solid var(--v-border);
+            border-radius: 8px;
+            margin-top: 40px;
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 1100px) {
+            .uplink-container {
+                grid-template-columns: 1fr;
+                margin-top: 80px;
+            }
+
+            .uplink-visual {
+                display: none;
+            }
+
+            .uplink-form {
+                padding: 40px 20px;
+            }
+
+            .uplink-form h1 {
+                font-size: 2.5rem !important;
+            }
+
+            .node-strip {
+                flex-wrap: wrap;
+                gap: 15px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            form>div {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+        }
+
+        /* Light Mode Overrides for Contact Form */
+        [data-theme="light"] .uplink-input {
+            color: var(--fg);
+            border-bottom-color: var(--border);
+        }
+
+        [data-theme="light"] .uplink-input::placeholder {
+            color: rgba(26, 26, 46, 0.5);
+        }
+    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link mobile-only-link"
+                    style="display: none; font-weight: 800; color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px;">WEBSITE</a>
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="contact.html" class="nav-link active">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="v-container" style="padding-top: 50px; padding-bottom: 100px;">
+        <div class="uplink-container reveal">
+            <div class="uplink-form">
+                <span class="v-label">SECURE TRANSMISSION</span>
+                <h1 style="font-size: 3rem; margin-bottom: 50px;">Initiate <br>Strategic Uplink.</h1>
+                <form>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <label class="v-label" style="font-size: 0.9rem;">Full Identity</label>
+                            <input type="text" class="uplink-input" placeholder="Name Ref" required>
+                        </div>
+                        <div>
+                            <label class="v-label" style="font-size: 0.9rem;">Corporation</label>
+                            <input type="text" class="uplink-input" placeholder="Entity ID">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="v-label" style="font-size: 0.9rem;">Secure Channel (Email)</label>
+                        <input type="email" class="uplink-input" placeholder="protocol@address.com" required>
+                    </div>
+                    <div>
+                        <label class="v-label" style="font-size: 0.9rem;">Transmission Intel</label>
+                        <textarea class="uplink-input" placeholder="Summarize requirements..."
+                            style="height: 120px; resize: none;"></textarea>
+                    </div>
+                    <button type="submit" class="v-button" style="width: 100%; height: 60px;"><span>Transmit
+                            Request</span></button>
+                </form>
+            </div>
+            <div class="uplink-visual">
+                <img src="vanguard_uplink_premium.png" alt="Operational Uplink">
+                <div class="uplink-overlay">
+                    <span class="v-label" style="color: white; opacity: 0.5;">SATELLITE SYNC // ACTIVE</span>
+                    <h3 style="font-size: 1.5rem; margin-top: 10px;">World-class support <br>on every continent.</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-strip reveal">
+            <span>SEATTLE_HQ: 0.4ms</span>
+            <span>BERLIN_HUB: 12ms</span>
+            <span>TOKYO_NODE: 42ms</span>
+            <span>SINGAPORE_DOCK: 15ms</span>
+            <span>ORBITAL_STATION: 250ms</span>
+        </div>
+
+        <!-- NEW SECTION: GLOBAL HUB DIRECTORY & PERFORMANCE -->
+        <section style="margin-top: 15vh;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px;">
+                <div>
+                    <span class="v-label">PHYSICAL_INFRASTRUCTURE</span>
+                    <h2 style="font-size: 3rem; margin-top: 10px;">Global Hub Directory.</h2>
+                </div>
+                <div class="label-mono" style="opacity: 0.4;">LAST_UPDATE: 21:04:02</div>
+            </div>
+
+            <div class="v-grid-experimental" style="gap: 1px; background: var(--border);">
+                <div style="background: var(--bg); padding: 40px; grid-column: span 4;">
+                    <span class="label-mono" style="color: var(--gold);">EUROPE_SYNC</span>
+                    <h4 style="margin-top: 20px;">Berlin Nexus-04</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 15px;">Invalidenstraße 115, <br>10115
+                        Berlin, Germany</p>
+                    <div style="margin-top: 30px; font-family: var(--font-mono); font-size: 0.9rem; color: #00FF00;">
+                        UPLINK: ACTIVE // 12GBPS</div>
+                </div>
+                <div style="background: var(--bg); padding: 40px; grid-column: span 4;">
+                    <span class="label-mono" style="color: var(--gold);">ASIA_SYNC</span>
+                    <h4 style="margin-top: 20px;">Tokyo Node-09</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 15px;">2-chōme-8-1 Nishishinjuku,
+                        <br>Shinjuku City, Tokyo 163-8001
+                    </p>
+                    <div style="margin-top: 30px; font-family: var(--font-mono); font-size: 0.9rem; color: #00FF00;">
+                        UPLINK: ACTIVE // 40GBPS</div>
+                </div>
+                <div style="background: var(--bg); padding: 40px; grid-column: span 4;">
+                    <span class="label-mono" style="color: var(--gold);">AMERICAS_SYNC</span>
+                    <h4 style="margin-top: 20px;">Seattle Primary</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 15px;">701 5th Ave, <br>Seattle, WA 98104,
+                        USA</p>
+                    <div style="margin-top: 30px; font-family: var(--font-mono); font-size: 0.9rem; color: #00FF00;">
+                        UPLINK: ACTIVE // 100GBPS</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADDED: SATELLITE NETWORK HEALTH SECTION -->
+        <section style="margin-top: 15vh;">
+            <div style="margin-bottom: 60px;">
+                <span class="v-label">ORBITAL_CONNECTIVITY</span>
+                <h2 style="font-size: 2.5rem; margin-top: 10px;">Lattice Satellite Health.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 20px;">
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #00FF00; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #00FF00;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V8_01</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">99.4%</div>
+                </div>
+                <!-- Repeat for more satellites -->
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #00FF00; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #00FF00;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V8_02</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">98.1%</div>
+                </div>
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #00FF00; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #00FF00;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V8_03</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">100%</div>
+                </div>
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #FFD700; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #FFD700;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V8_04</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">82.4%</div>
+                </div>
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #00FF00; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #00FF00;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V9_01</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">99.9%</div>
+                </div>
+                <div style="grid-column: span 2; border: 1px solid var(--border); padding: 20px; text-align: center;">
+                    <div
+                        style="width: 10px; height: 10px; background: #00FF00; border-radius: 50%; margin: 0 auto 15px; box-shadow: 0 0 10px #00FF00;">
+                    </div>
+                    <span class="label-mono" style="font-size: 0.85rem;">SAT_V9_02</span>
+                    <div style="font-size: 1.05rem; margin-top: 10px; font-family: var(--font-mono);">99.2%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: EMERGENCY OVERRIDE -->
+        <section style="margin-top: 10vh; background: #333333; color: #ffffff !important; padding: 60px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 40px;">
+                <div>
+                    <span class="label-mono" style="color: rgba(255,255,255,0.8);">CRITICAL_FAILURE_ONLY</span>
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: #ffffff !important;">
+                        Emergency <br>Override.</h2>
+                </div>
+                <div style="text-align: right;">
+                    <span class="label-mono" style="font-size: 1.5rem; color: var(--v-gold) !important;">FREQUENCY:
+                        142.05 MHz</span>
+                    <p style="font-size: 0.95rem; opacity: 1; margin-top: 10px; color: #ffffff !important;">Direct
+                        tactical uplink for Tier-1
+                        partners only.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: VISIT PROTOCOLS -->
+        <section style="margin-top: 15vh; border-bottom: 1px solid var(--border); padding-bottom: 10vh;">
+            <div style="margin-bottom: 60px;">
+                <span class="v-label">PHYSICAL_ACCESS_CLEARANCE</span>
+                <h2 style="font-size: 2.5rem; margin-top: 10px;">Visit Protocols.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 20px;">
+                <div
+                    style="grid-column: span 3; background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                    <span class="label-mono" style="font-size: 1rem; color: var(--gold);">STEP_01</span>
+                    <h4 style="font-size: 1.35rem; margin-top: 15px;">Biometric Prep</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.6; margin-top: 15px; line-height: 1.6;">Ensure all retinal
+                        and palm-print data
+                        is synced with the global Sentinel registry 72h prior to arrival.</p>
+                </div>
+                <div
+                    style="grid-column: span 3; background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                    <span class="label-mono" style="font-size: 1rem; color: var(--gold);">STEP_02</span>
+                    <h4 style="font-size: 1.35rem; margin-top: 15px;">Courier Sync</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.6; margin-top: 15px; line-height: 1.6;">Authorized secure
+                        couriers only. No
+                        private vehicular assets allowed within the perimeter secondary-tier.</p>
+                </div>
+                <div
+                    style="grid-column: span 3; background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                    <span class="label-mono" style="font-size: 1rem; color: var(--gold);">STEP_03</span>
+                    <h4 style="font-size: 1.35rem; margin-top: 15px;">Signal Lockdown</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.6; margin-top: 15px; line-height: 1.6;">All outbound
+                        wireless transmissions
+                        will be suppressed during the duration of the institutional visit.</p>
+                </div>
+                <div
+                    style="grid-column: span 3; background: rgba(255,255,255,0.02); padding: 30px; border: 1px solid var(--border);">
+                    <span class="label-mono" style="font-size: 1rem; color: var(--gold);">STEP_04</span>
+                    <h4 style="font-size: 1.35rem; margin-top: 15px;">Triage Review</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.6; margin-top: 15px; line-height: 1.6;">Final exit
+                        interview
+                        and data-purge
+                        verification conducted by Sector Security before departure.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ENCRYPTED COMMUNICATION HUB & ANALOG SIGNAL ZONES -->
+        <section style="margin-top: 15vh; padding-bottom: 15vh; border-bottom: 1px solid var(--border);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;">
+                <div>
+                    <span class="v-label">DEPARTMENTAL_FREQUENCIES</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Direct <br>Routing.</h2>
+                    <ul style="margin-top: 40px; list-style: none; display: flex; flex-direction: column; gap: 20px;">
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">R&D_SYNTHESIS</span>
+                            <span class="label-mono" style="color: var(--gold);">14.2 // ALPHA</span>
+                        </li>
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">GLOBAL_LOGISTICS</span>
+                            <span class="label-mono" style="color: var(--gold);">09.4 // KINETIC</span>
+                        </li>
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">SOVEREIGN_RELATIONS</span>
+                            <span class="label-mono" style="color: var(--gold);">22.1 // NEUTRAL</span>
+                        </li>
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">INSTITUTIONAL_PR</span>
+                            <span class="label-mono" style="color: var(--gold);">04.8 // PUBLIC</span>
+                        </li>
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">LEGAL_CLEARANCE</span>
+                            <span class="label-mono" style="color: var(--gold);">01.1 // COMPLIANCE</span>
+                        </li>
+                        <li
+                            style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <span class="label-mono">EMERGENCY_SYNC</span>
+                            <span class="label-mono" style="color: #777777;">99.9 // CRITICAL</span>
+                        </li>
+                    </ul>
+
+                    <div style="margin-top: 60px;">
+                        <span class="v-label" style="opacity: 0.4;">ANALOG_OVERRIDE_ZONES</span>
+                        <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="border: 1px solid var(--border); padding: 20px;">
+                                <h5 style="font-size: 1rem; color: var(--gold);">ZONE_RED</h5>
+                                <p style="font-size: 0.9rem; opacity: 0.4; margin-top: 10px;">Deep-mountain thermal
+                                    isolation booth. No digital footprint.</p>
+                            </div>
+                            <div style="border: 1px solid var(--border); padding: 20px;">
+                                <h5 style="font-size: 1rem; color: var(--gold);">ZONE_BLUE</h5>
+                                <p style="font-size: 0.9rem; opacity: 0.4; margin-top: 10px;">Sub-oceanic cable
+                                    junction
+                                    interface. 100% shielding.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position: sticky; top: 150px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 50px;">
+                        <span class="label-mono"
+                            style="font-size: 0.85rem; opacity: 0.4;">SECURE_INQUIRY_INTERFACE</span>
+                        <div style="margin-top: 30px; font-family: var(--font-mono); font-size: 0.95rem;">
+                            <div style="color: #00FF00; margin-bottom: 10px;">> connection established...</div>
+                            <div style="opacity: 0.6; margin-bottom: 20px;">> awaiting biometric input for higher-tier
+                                access.</div>
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                <span style="color: var(--gold);">[ ACCESS_LEVEL_01 ]</span>
+                                <span style="opacity: 0.4;">GENERAL_QUERY</span>
+                            </div>
+                            <div style="background: rgba(0,255,0,0.05); padding: 15px; border-left: 2px solid #00FF00;">
+                                <div style="font-size: 0.9rem; color: #00FF00; margin-bottom: 50px;">AUTH_LOG:</div>
+                                <div style="font-size: 0.85rem; opacity: 0.4;">[ 21:05:12 ] PING_RECEIVED</div>
+                                <div style="font-size: 0.85rem; opacity: 0.4;">[ 21:05:14 ] HANDSHAKE_NOMINAL</div>
+                                <div style="font-size: 0.85rem; opacity: 0.4;">[ 21:05:16 ] ENCRYPTION_ACTIVE</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADDED: STRATEGIC DIRECTIVES (FAQ) -->
+        <section style="margin-top: 15vh;">
+            <div style="margin-bottom: 80px;">
+                <span class="v-label">STRATEGIC_DIRECTIVES</span>
+                <h2 style="font-size: 3rem; margin-top: 10px;">Transmission FAQ.</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px;">
+                <div>
+                    <h4
+                        style="font-size: 1.25rem; border-left: 2px solid var(--gold); padding-left: 20px; margin-bottom: 20px;">
+                        How do I request Tier-1 access?</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6; padding-left: 22px;">Tier-1 access is
+                        reserved for sovereign entities and global industrial syndicates. Requests must be submitted via
+                        the Secure Uplink with a verified Entity ID and institutional clearance code.</p>
+                </div>
+                <div>
+                    <h4
+                        style="font-size: 1.25rem; border-left: 2px solid var(--gold); padding-left: 20px; margin-bottom: 20px;">
+                        What is the latency threshold for orbital sync?</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6; padding-left: 22px;">Current orbital
+                        nodes maintain as sync window of &lt;250ms. High-tension manufacturing require a local
+                        terrestrial hub (e.g., Berlin Primary) for &lt;20ms performance.</p>
+                </div>
+                <div>
+                    <h4
+                        style="font-size: 1.25rem; border-left: 2px solid var(--gold); padding-left: 20px; margin-bottom: 20px;">
+                        Is transmission data archived?</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6; padding-left: 22px;">Sentinel utilizes
+                        an instantiation-only protocol. Once a transmission is processed and the sync is verified, the
+                        ephemeral data packet is purged from the lattice buffer.</p>
+                </div>
+                <div>
+                    <h4
+                        style="font-size: 1.25rem; border-left: 2px solid var(--gold); padding-left: 20px; margin-bottom: 20px;">
+                        How do I report a lattice anomaly?</h4>
+                    <p style="font-size: 1rem; opacity: 0.5; line-height: 1.6; padding-left: 22px;">Use the Emergency
+                        Override frequency (142.05 MHz) for localized anomalies. For global sync drift, signal the
+                        Triage Hub immediately using Tier-0 protocols.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: SECURE TRIAGE -->
+        <section
+            style="margin-top: 15vh; background: rgba(255,255,255,0.02); padding: 80px; border: 1px solid var(--border);">
+            <div class="v-grid-experimental" style="align-items: center;">
+                <div style="grid-column: span 7;">
+                    <span class="v-label">INCIDENT_RESPONSE</span>
+                    <h2 style="font-size: 3rem; margin-top: 20px;">Secure Triage & <br>Redline Support.</h2>
+                    <p style="margin-top: 30px; opacity: 0.5; line-height: 1.8;">
+                        For critical lattice failures or sync drift, our triage team is available via
+                        encrypted analog channels. Tier-1 and Tier-0 partners should use their
+                        dedicated physical keys for immediate connection bypass.
+                    </p>
+                    <div style="margin-top: 40px; display: flex; gap: 40px;">
+                        <div>
+                            <h5 style="font-size: 1rem; color: var(--gold); margin-bottom: 10px;">RESPONSE_TIME</h5>
+                            <div class="v-stat" style="font-size: 1.5rem;">&lt; 30s</div>
+                        </div>
+                        <div>
+                            <h5 style="font-size: 1rem; color: var(--gold); margin-bottom: 10px;">RESOLUTION_RATE
+                            </h5>
+                            <div class="v-stat" style="font-size: 1.5rem;">99.4%</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="grid-column: span 5; text-align: right;">
+                    <button class="v-button" style="background: #333333; color: white;"><span>INITIATE EMERGENCY
+                            OVERRIDE</span></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: SECTOR FREQUENCIES -->
+        <section style="margin-top: 15vh; padding-bottom: 10vh;">
+            <div style="margin-bottom: 60px;">
+                <span class="v-label">DECENTRALIZED_ROUTING</span>
+                <h2 style="font-size: 2.5rem; margin-top: 10px;">Sector Frequencies.</h2>
+            </div>
+            <div class="v-grid-experimental" style="gap: 20px;">
+                <div
+                    style="grid-column: span 4; border: 1px solid var(--border); padding: 30px; background: var(--bg);">
+                    <span class="label-mono" style="color: var(--gold);">SEC_FREQ // 142.05</span>
+                    <h4 style="margin-top: 15px;">Kinetic Command</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 10px;">Direct tactical coordination for
+                        planetary and orbital defense suites.</p>
+                </div>
+                <div
+                    style="grid-column: span 4; border: 1px solid var(--border); padding: 30px; background: var(--bg);">
+                    <span class="label-mono" style="color: var(--gold);">SEC_FREQ // 084.22</span>
+                    <h4 style="margin-top: 15px;">Neural Sync</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 10px;">Calibration support for sub-micron
+                        neural interface manufacturing.</p>
+                </div>
+                <div
+                    style="grid-column: span 4; border: 1px solid var(--border); padding: 30px; background: var(--bg);">
+                    <span class="label-mono" style="color: var(--gold);">SEC_FREQ // 012.99</span>
+                    <h4 style="margin-top: 15px;">Abyssal Comms</h4>
+                    <p style="font-size: 1.05rem; opacity: 0.4; margin-top: 10px;">Low-frequency acoustic sync for
+                        deep-sea mining and logistics nodes.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: TALENT ACQUISITION (JOIN THE CORE) -->
+        <section style="margin-top: 15vh; background: var(--fg); color: var(--bg); padding: 100px;">
+            <div class="v-grid-experimental" style="align-items: center;">
+                <div style="grid-column: span 8;">
+                    <span class="label-mono" style="opacity: 0.6; color: inherit;">INSTITUTIONAL_GROWTH</span>
+                    <h2 style="font-size: 3.5rem; font-weight: 900; margin-top: 20px; line-height: 1.1;">Forging the
+                        <br>Next Sentinel.
+                    </h2>
+                    <p style="margin-top: 40px; font-size: 1.25rem; opacity: 0.8; max-width: 600px;">We are seeking
+                        abnormal intellects to manage the global lattice and orbital infrastructure. If your expertise
+                        lies in high-tension kinetics or quantum-encrypted logistics, we require your presence.</p>
+                </div>
+                <div style="grid-column: span 4; text-align: right;">
+                    <a href="register.html" class="v-button"
+                        style="background: var(--bg); color: var(--fg); padding: 30px 60px; font-size: 1rem;"><span>Join
+                            the Core</span></a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 1.05rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.9rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

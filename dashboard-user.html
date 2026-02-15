@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // USER HUD</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .module-action-group {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Main HUD Content Flow */
+        .hud-content-flow {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px var(--gutter);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .industrial-manifesto {
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.01);
+            border-left: 2px solid var(--v-accent);
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .industrial-manifesto::after {
+            content: "SENTINEL_PROTOCOL_01";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            opacity: 0.2;
+            letter-spacing: 2px;
+        }
+
+        .manifesto-title {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--v-gold);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .manifesto-text {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 800px;
+            opacity: 0.8;
+        }
+
+        .hud-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--v-border);
+            padding: 35px 30px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            position: relative;
+            transition: 0.4s var(--ease);
+        }
+
+        [data-theme="light"] .hud-panel {
+            background: #fdfdfd;
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        .hud-panel:hover {
+            border-color: var(--v-accent);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .hud-row {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .v-stat {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 15px 0;
+            letter-spacing: -2px;
+            color: var(--fg);
+        }
+
+        [data-theme="light"] .v-stat {
+            color: #1a1a2e;
+        }
+
+        .chart-container-sm {
+            height: 120px;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .chart-container-md {
+            height: 350px;
+            margin-top: 25px;
+            position: relative;
+        }
+
+        .viewscreen {
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            background: #050505;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        [data-theme="light"] .viewscreen {
+            background: #f8f9fa;
+            border-color: rgba(0, 122, 255, 0.1);
+        }
+
+        .log-terminal {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            opacity: 0.7;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            min-height: 120px;
+        }
+
+        .text-block {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-top: 15px;
+        }
+
+        [data-theme="light"] .text-block {
+            color: #444455;
+            opacity: 1;
+        }
+
+        .v-label-accent {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            color: var(--v-accent);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .v-label {
+            display: block;
+            opacity: 1 !important;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        [data-theme="light"] .v-label {
+            color: #1a1a2e;
+        }
+
+        .viewscreen .v-label {
+            color: var(--v-gold) !important;
+            opacity: 1 !important;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .viewscreen .v-label {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--v-accent) !important;
+            text-shadow: none;
+        }
+
+        @media (max-width: 1200px) {
+            .hud-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hud-panel {
+                grid-column: span 1 !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hud-row {
+                grid-template-columns: 1fr;
+            }
+
+            .v-stat {
+                font-size: 2.5rem;
+            }
+
+            .tactical-module-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .module-action-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+
+    <nav>
+        <div class="v-container"
+            style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <a href="index.html" class="v-logo-wrapper">
+                <div class="v-logo-icon"></div>
+                <div class="v-logo-text">SENTINEL</div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-link mobile-only-link"
+                    style="display: none; font-weight: 800; color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px;">WEBSITE</a>
+                <div class="nav-group">
+                    <a href="index.html" class="nav-link">Home <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="index.html" class="dropdown-item">Home 1 // DEFAULT</a>
+                        <a href="index2.html" class="dropdown-item">Home 2 // ALTERNATE</a>
+                    </div>
+                </div>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+                <div class="nav-group">
+                    <a href="#" class="nav-link active">Dashboards <i data-lucide="chevron-down"></i></a>
+                    <div class="dropdown-box">
+                        <a href="dashboard-user.html" class="dropdown-item">User Dashboard // HUD</a>
+                        <a href="dashboard-admin.html" class="dropdown-item">Admin Dashboard // COMMAND</a>
+                    </div>
+                </div>
+                <a href="login.html" class="nav-link mobile-only-login" style="display: none;">Login</a>
+            </div>
+
+            <div class="nav-tools">
+                <button class="nav-tool-btn" onclick="toggleTheme()" title="Theme"><i data-lucide="sun"></i></button>
+                <button id="rtl-toggle-btn" class="nav-tool-btn rtl-toggle" onclick="toggleDirection()"
+                    title="Toggle Direction">LTR</button>
+                <a href="login.html" class="v-btn-login">Login</a>
+            </div>
+
+            <button class="v-mobile-toggle">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Top-mounted Module Navigation for User HUD -->
+    <div class="tactical-module-bar">
+        <a href="#overview" class="module-item active"><i data-lucide="layout"></i> OVERVIEW</a>
+        <a href="#telemetry" class="module-item"><i data-lucide="activity"></i> LIVE_TELEMETRY</a>
+        <a href="#resources" class="module-item"><i data-lucide="database"></i> RESOURCE_SYNC</a>
+        <a href="#logs" class="module-item"><i data-lucide="message-square"></i> COMMS_LOG</a>
+
+        <div class="tactical-ticker">
+            <div class="ticker-item">GLOBAL_SYNC: <b>NOMINAL</b></div>
+        </div>
+
+        <div class="module-action-group">
+            <button class="v-button" style="padding: 8px 15px; font-size: 0.75rem;"><span>CLEAR_ALERTS</span></button>
+            <button class="v-button"
+                style="padding: 8px 15px; font-size: 0.75rem; background: var(--v-gold);"><span>ROT_ENCRYPTION</span></button>
+        </div>
+    </div>
+
+    <main class="hud-content-flow">
+        <!-- Main Visualization Row -->
+        <div class="hud-row" id="overview">
+            <div class="hud-panel viewscreen"
+                style="grid-column: span 6; height: 450px; flex-direction: column; justify-content: flex-start; padding: 30px; align-items: stretch;">
+                <div class="v-label"
+                    style="text-align: center; width: 100%; margin-bottom: 25px; display: block; position: relative;">
+                    LATTICE_VISUALIZATION // REALTIME Sync</div>
+                <div style="flex: 1; min-height: 0; position: relative;">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6; height: 450px;">
+                <span class="v-label">THERMAL_DISTRIBUTION</span>
+                <div class="chart-container-md"><canvas id="thermalChart"></canvas></div>
+                <p class="text-block" style="font-size: 0.9rem;">Thermal nodes at Sector-7 reporting minor heat
+                    saturation. Cooling cycles engaged for sub-micron processors in the foundry core. Current ambient
+                    temperature: 294.2K.</p>
+            </div>
+        </div>
+
+        <!-- Primary Stats Row -->
+        <div class="hud-row" id="telemetry">
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">OPERATOR_STABILITY</span>
+                <div class="v-stat">84.2%</div>
+                <div class="text-block">Peak cognitive sync active. Physical status nominal. Pulse monitoring within
+                    predefined Level-03 safety threshold.</div>
+                <div class="chart-container-sm"><canvas id="syncChart"></canvas></div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">RESOURCE_CONCENTRATION</span>
+                <div class="chart-container-md"><canvas id="resourceChart"></canvas></div>
+                <div class="text-block" style="font-size: 0.9rem;">70% processing bandwidth dedicated to Lattice
+                    Maintenance. Secondary buffers operational.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">MISSION_OBJECTIVES</span>
+                <div class="chart-container-sm"><canvas id="objectivesChart"></canvas></div>
+                <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <span class="v-label-accent">OBJ_PRIMARY</span>
+                        <p style="font-size: 1rem;">Maintain 99% sync with Orbital_7 gateway cluster. Signal strength
+                            is currently optimal.</p>
+                    </div>
+                    <div>
+                        <span class="v-label-accent">OBJ_SECONDARY</span>
+                        <p style="font-size: 1rem;">Clear all Level-2 fragmentation logs before the next scheduled
+                            node rotation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">COGNITIVE_SYNC_PROFILE</span>
+                <div class="chart-container-md"><canvas id="cogSyncChart"></canvas></div>
+                <div class="text-block" style="font-size: 0.9rem;">Neural interface stability maintains a 0.002ms
+                    jitter threshold. Subjective time dilation at 1.04x nominal.</div>
+            </div>
+        </div>
+
+        <!-- Distributed Metrics Row -->
+        <div class="hud-row" id="resources">
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">REQUEST_LATENCY</span>
+                <div class="chart-container-sm"><canvas id="latencyChart"></canvas></div>
+                <div class="text-block">Global latency stable at 24ms. Local cluster 'Seattle-04' reporting zero
+                    deviations in uplink performance.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">SECURITY_VECTORS</span>
+                <div class="chart-container-sm"><canvas id="securityChart"></canvas></div>
+                <div class="text-block">Detected 12 minor pings from neutralized sources. End-to-end encryption
+                    protocols are standing firm.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">ENERGY_OUTPUT // FISSION</span>
+                <div class="chart-container-sm"><canvas id="energyChart"></canvas></div>
+                <div class="text-block">Reactor Core 04 outputting 1.2GW. Efficiency standing at 94.2%. Stability index
+                    indicates optimal fuel burn rate for the current cycle.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">SUBLUNAR_WEATHER_SYSTEM</span>
+                <div class="chart-container-sm"><canvas id="weatherChart"></canvas></div>
+                <div class="text-block">Lunar-side pressure at 10^-12 Torr. Radiation levels within safe transit
+                    parameters. Static discharge detected in Sector 9.</div>
+            </div>
+        </div>
+
+        <div class="hud-row">
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">UPLINK_QUALITY</span>
+                <div class="chart-container-sm"><canvas id="uplinkChart"></canvas></div>
+                <div class="v-stat" style="font-size: 1.5rem; margin: 10px 0;">S/N: 42dB</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">QUANTUM_BUFFER</span>
+                <div class="chart-container-sm"><canvas id="memoryChart"></canvas></div>
+                <div class="v-stat" style="font-size: 1.5rem; margin: 10px 0;">DENSITY: 88%</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">HULL_INTEGRITY</span>
+                <div class="chart-container-sm"><canvas id="integrityChart"></canvas></div>
+                <div class="v-stat" style="font-size: 1.5rem; margin: 10px 0;">NOMINAL</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">ION_THRUST_EFF</span>
+                <div class="chart-container-sm"><canvas id="ionChart"></canvas></div>
+                <div class="v-stat" style="font-size: 1.5rem; margin: 10px 0;">ISP: 4200s</div>
+            </div>
+        </div>
+
+        <!-- Additional Industrial Context -->
+        <div class="industrial-manifesto">
+            <span class="manifesto-title">SENTINEL_INSTITUTIONAL_DOCTRINE</span>
+            <p class="manifesto-text">
+                Sentinel Industries operates at the intersection of absolute precision and sovereign power. Our lattice.
+            </p>
+            <div
+                style="margin-top: 30px; display: flex; gap: 40px; font-family: var(--font-mono); font-size: 0.8rem; opacity: 0.4;">
+                <span>STABILITY: ABSOLUTE</span>
+                <span>EFFICIENCY: OPTIMIZED</span>
+                <span>SOVEREIGNTY: UNCOMPROMISED</span>
+            </div>
+        </div>
+
+        <div class="hud-row">
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">DYNAMIC_CLOAKING_STATUS</span>
+                <div class="chart-container-sm"><canvas id="shroudChart"></canvas></div>
+                <div class="text-block">Electromagnetic shroud at 99%. Signature remains below detection thresholds for
+                    all non-authorized scanning nodes. Particle scattering active.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">NEURAL_SYNC_AMPLITUDE</span>
+                <div class="chart-container-sm"><canvas id="neuralChart"></canvas></div>
+                <div class="text-block">Interface amplitude matching operator brainwave frequency at 14.2Hz. Cognitive
+                    load handling increased by 20% for high-precision tasks.</div>
+            </div>
+        </div>
+
+        <!-- Final Diagnostics & Log Row -->
+        <div class="hud-row" id="logs">
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">NETWORK_TOPOLOGY</span>
+                <div class="chart-container-md"><canvas id="networkChart"></canvas></div>
+                <div class="text-block" style="font-size: 0.9rem;">Active nodes: 14,204. Serving as tertiary sync-node
+                    for European data sectors. Routing through Station Gamma for optimized orbital bounce.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">STORAGE_UTILIZATION</span>
+                <div class="chart-container-md"><canvas id="storageChart"></canvas></div>
+                <div class="text-block">Local cache at 60% capacity. Automated secure purge scheduled in 14h cycles.
+                    Fragmentation minimized through real-time defrag protocols.</div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">SYSTEM_LOGS_TERM</span>
+                <div class="log-terminal">
+                    <div style="color: #00FF00;">[12:04:11] NODE_SEA_SYNC // OK</div>
+                    <div style="color: var(--v-gold);">[12:05:42] KEY_ROTATION // WAIT</div>
+                    <div style="margin-top: 5px;">[12:10:05] PKT_DUMP_04 // OK</div>
+                    <div style="color: var(--v-accent); margin-top: 5px;">[12:15:21] LATTICE_REGEN // PENDING</div>
+                    <div style="opacity: 0.4; margin-top: 5px;">[12:20:11] HEARTBEAT_ACTIVE_PULSE</div>
+                    <div style="color: #00FF00; margin-top: 5px;">[12:22:45] THERMAL_SHIELD // LOCKED</div>
+                    <div style="opacity: 0.4; margin-top: 5px;">[12:25:01] UPLINK_HANDSHAKE // SUCCESS</div>
+                </div>
+            </div>
+            <div class="hud-panel" style="grid-column: span 6;">
+                <span class="v-label">SYSTEM_HEARTBEAT_OSCILLATION</span>
+                <div class="chart-container-md"><canvas id="heartbeatChart"></canvas></div>
+                <div class="text-block">Real-time pulse monitoring of the global lattice core. Sine-phase remains
+                    coherent with orbital synchronization beats.</div>
+            </div>
+        </div>
+        <div class="text-block" style="font-size: 0.85rem;">Real-time kernel log stream. Monitoring all Level-03
+            tactical operations across the global and orbital grid.</div>
+    </main>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+    <script>
+        lucide.createIcons();
+
+        Chart.defaults.color = 'rgba(128, 128, 128, 0.8)';
+        Chart.defaults.font.family = 'Space Grotesk, monospace';
+        Chart.defaults.font.size = 10;
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { family: 'Space Grotesk' },
+                    bodyFont: { family: 'Space Grotesk' }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    grid: { color: 'rgba(128, 128, 128, 0.2)', borderColor: 'rgba(128, 128, 128, 0.3)' },
+                    ticks: { color: 'rgba(128, 128, 128, 0.9)', font: { weight: '600' } }
+                },
+                y: {
+                    display: true,
+                    grid: { color: 'rgba(128, 128, 128, 0.2)', borderColor: 'rgba(128, 128, 128, 0.3)' },
+                    ticks: { color: 'rgba(128, 128, 128, 0.9)', font: { weight: '600' } }
+                }
+            },
+            elements: { line: { tension: 0.4 }, point: { radius: 4 } }
+        };
+
+        const chartColors = {
+            accent: '#007aff',
+            gold: '#FFD700',
+            success: '#00FF00',
+            danger: '#555555',
+            info: '#00CAFF'
+        };
+
+        // Initialize HUD Charts
+        new Chart(document.getElementById('velocityChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 40 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 40 }, () => Math.random() * 50 + 20),
+                    borderColor: chartColors.accent,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: chartColors.accent + '11'
+                }]
+            },
+            options: { ...commonOptions, scales: { x: { display: false }, y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        });
+
+        new Chart(document.getElementById('resourceChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Core', 'Sync', 'Secure'],
+                datasets: [{
+                    data: [45, 30, 25],
+                    backgroundColor: [chartColors.accent, chartColors.gold, '#00ffcc'],
+                    borderWidth: 0
+                }]
+            },
+            options: { ...commonOptions, cutout: '80%' }
+        });
+
+        new Chart(document.getElementById('networkChart'), {
+            type: 'radar',
+            data: {
+                labels: ['LOD', 'SYNC', 'LAT', 'BUF', 'SEC', 'FRG'],
+                datasets: [{
+                    data: [80, 70, 90, 60, 100, 85],
+                    borderColor: chartColors.gold,
+                    backgroundColor: chartColors.gold + '33',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    r: {
+                        grid: { color: 'rgba(128, 128, 128, 0.4)' },
+                        angleLines: { color: 'rgba(128, 128, 128, 0.4)' },
+                        ticks: { display: false },
+                        pointLabels: {
+                            color: 'rgba(128, 128, 128, 0.9)',
+                            font: { size: 11, weight: '900' }
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('storageChart'), {
+            type: 'bar',
+            data: {
+                labels: ['V1', 'V2', 'V3', 'V4', 'V5'],
+                datasets: [{
+                    data: [65, 80, 45, 90, 70],
+                    backgroundColor: chartColors.accent + '66',
+                    borderColor: chartColors.accent,
+                    borderWidth: 1
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('syncChart'), {
+            type: 'line',
+            data: {
+                labels: [1, 2, 3, 4, 5, 6, 7],
+                datasets: [{
+                    data: [80, 82, 81, 84, 83, 85, 84],
+                    borderColor: '#00ffcc',
+                    borderWidth: 1,
+                    fill: true,
+                    backgroundColor: '#00ffcc08'
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('latencyChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 15 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 15 }, () => Math.random() * 10 + 2),
+                    borderColor: chartColors.danger,
+                    fill: true,
+                    backgroundColor: chartColors.danger + '08',
+                    borderWidth: 1
+                }]
+            },
+            options: { ...commonOptions, scales: { y: { display: true, ticks: { display: false } } } }
+        });
+
+        new Chart(document.getElementById('securityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'],
+                datasets: [{
+                    label: 'Threat Level',
+                    data: [12, 19, 7, 15, 22, 10],
+                    backgroundColor: chartColors.danger + '66',
+                    borderColor: chartColors.danger,
+                    borderWidth: 1
+                }]
+            },
+            options: { ...commonOptions, scales: { y: { display: true, grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        });
+
+        new Chart(document.getElementById('objectivesChart'), {
+            type: 'line',
+            data: {
+                labels: ['W1', 'W2', 'W3', 'W4'],
+                datasets: [{
+                    data: [85, 92, 88, 99],
+                    borderColor: chartColors.success,
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: chartColors.success + '11',
+                    tension: 0.4
+                }]
+            },
+            options: commonOptions
+        });
+
+        // New HUD Charts
+        new Chart(document.getElementById('thermalChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 20 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 20 }, () => Math.random() * 20 + 70),
+                    borderColor: '#666666',
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: '#66666622'
+                }]
+            },
+            options: { ...commonOptions, scales: { y: { display: true, ticks: { display: false } } } }
+        });
+
+        new Chart(document.getElementById('energyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['R1', 'R2', 'R3', 'R4', 'R5'],
+                datasets: [{
+                    data: [80, 95, 70, 85, 90],
+                    backgroundColor: chartColors.success + '66',
+                    borderColor: chartColors.success,
+                    borderWidth: 1
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('uplinkChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 10 }, (_, i) => i),
+                datasets: [{
+                    data: [40, 42, 41, 45, 43, 44, 42, 45, 46, 45],
+                    borderColor: chartColors.info,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    fill: false
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('memoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Used', 'Free'],
+                datasets: [{
+                    data: [88, 12],
+                    backgroundColor: [chartColors.accent, 'rgba(255,255,255,0.05)'],
+                    borderWidth: 0
+                }]
+            },
+            options: { ...commonOptions, cutout: '70%' }
+        });
+
+        new Chart(document.getElementById('integrityChart'), {
+            type: 'polarArea',
+            data: {
+                labels: ['Hull', 'Core', 'Uplink', 'Power', 'Atm'],
+                datasets: [{
+                    data: [95, 100, 92, 88, 98],
+                    backgroundColor: [chartColors.accent + '44', chartColors.gold + '44', chartColors.info + '44', chartColors.danger + '44', chartColors.success + '44'],
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { ...commonOptions, scales: { r: { display: false } } }
+        });
+
+        new Chart(document.getElementById('ionChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 15 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 15 }, () => 4000 + Math.random() * 500),
+                    borderColor: '#00ccff',
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: '#00ccff11'
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('shroudChart'), {
+            type: 'radar',
+            data: {
+                labels: ['EM', 'SIGN', 'HEAT', 'RAD', 'OPT'],
+                datasets: [{
+                    data: [99, 95, 98, 97, 99],
+                    borderColor: 'rgba(128, 128, 128, 1.0)',
+                    backgroundColor: 'rgba(128, 128, 128, 0.2)',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    r: {
+                        display: true,
+                        grid: { color: 'rgba(128, 128, 128, 0.4)' },
+                        angleLines: { display: true, color: 'rgba(128, 128, 128, 0.4)' },
+                        ticks: { display: false },
+                        pointLabels: {
+                            color: 'rgba(128, 128, 128, 0.9)',
+                            font: { size: 10, weight: 'bold' }
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('neuralChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 50 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 50 }, (_, i) => Math.sin(i * 0.5) * 10 + 50 + Math.random() * 5),
+                    borderColor: '#a855f7',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('cogSyncChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 20 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 20 }, () => 90 + Math.random() * 10),
+                    borderColor: chartColors.accent,
+                    fill: true,
+                    backgroundColor: chartColors.accent + '11'
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('weatherChart'), {
+            type: 'bar',
+            data: {
+                labels: ['S1', 'S2', 'S3', 'S4', 'S5'],
+                datasets: [{
+                    data: [12, 18, 5, 22, 10],
+                    backgroundColor: chartColors.info + '66'
+                }]
+            },
+            options: commonOptions
+        });
+
+        new Chart(document.getElementById('heartbeatChart'), {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: 100 }, (_, i) => i),
+                datasets: [{
+                    data: Array.from({ length: 100 }, (_, i) => Math.sin(i * 0.2) * 20 + 50 + Math.random() * 2),
+                    borderColor: chartColors.success,
+                    borderWidth: 1,
+                    pointRadius: 0
+                }]
+            },
+            options: { ...commonOptions, elements: { line: { tension: 0.1 } } }
+        });
+    </script>
+
+    <footer>
+        <div class="v-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="v-logo-wrapper" style="margin-bottom: 40px;">
+                        <div class="v-logo-icon"></div>
+                        <div class="v-logo-text">SENTINEL</div>
+                    </div>
+                    <p style="opacity: 0.4; font-size: 0.9rem; line-height: 1.6; max-width: 300px;">
+                        The global standard in industrial intelligence and next-generation manufacturing infrastructure.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" class="footer-link">Home</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="services.html" class="footer-link">Services</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="dashboard-user.html" class="footer-link">User Terminal</a></li>
+                        <li><a href="dashboard-admin.html" class="footer-link">Command Center</a></li>
+                        <li><a href="login.html" class="footer-link">Secure Login</a></li>
+                        <li><a href="register.html" class="footer-link">Request Access</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Status</h4>
+                    <div style="font-family: var(--font-mono); font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">GLOBAL_SYNC</span>
+                            <span style="color: #00FF00;">NOMINAL</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="opacity: 0.4;">UPLINK_STRENGTH</span>
+                            <span style="color: var(--gold);">98.4%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="opacity: 0.4;">ACTIVE_NODES</span>
+                            <span>14,204</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.3; letter-spacing: 0.2em;">
+                <span>© Received by pathmakers 2026</span>
+                <span>SECURE_CONNECTION // AES-256</span>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
