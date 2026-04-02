@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTINEL HUB // AUTHENTICATION_CENTER</title>
+    <link rel="icon" type="image/png" href="Assets/favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--v-border);
+            padding-bottom: 15px;
+        }
+
+        .auth-tab {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: var(--fg);
+            opacity: 0.4;
+            cursor: pointer;
+            transition: 0.3s var(--ease);
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        .auth-tab.active {
+            opacity: 1;
+            color: var(--v-accent);
+        }
+
+        .auth-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--v-accent);
+        }
+
+        .auth-form-section {
+            display: none;
+            animation: authFadeIn 0.5s var(--ease) forwards;
+        }
+
+        .auth-form-section.active {
+            display: block;
+        }
+
+        @keyframes authFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-panel {
+            max-width: 550px;
+        }
+
+        .auth-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--fg);
+            opacity: 0.45;
+            text-decoration: none;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            transition: opacity 0.3s var(--ease);
+        }
+
+        .auth-back-link:hover {
+            opacity: 0.9;
+            color: var(--v-accent);
+        }
+
+        .auth-branding .v-logo-wrapper {
+            position: relative !important;
+            left: auto !important;
+            right: auto !important;
+            top: auto !important;
+            transform: none !important;
+            margin-bottom: 5px !important;
+            justify-content: center !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            pointer-events: auto !important;
+        }
+
+        .auth-branding {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        @media (max-width: 900px) {
+            .auth-panel {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="v-overlay">
+        <div class="v-noise"></div>
+        <div class="v-scanlines"></div>
+    </div>
+
+
+
+    <div class="auth-wrap">
+        <div class="auth-circle"></div>
+
+        <div class="auth-panel v-reveal">
+            <div class="auth-branding" style="margin-bottom: 30px; width: 100%; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important;">
+                <div class="v-logo-wrapper" style="display: flex !important; align-items: center !important; justify-content: center !important; width: 100% !important; max-width: 100% !important; margin: 0 auto 10px auto !important; position: relative !important; left: auto !important; right: auto !important; transform: none !important; gap: 12px !important;">
+                    <div class="v-logo-icon" style="flex-shrink: 0; width: 20px; height: 20px;"></div>
+                    <div class="v-logo-text" style="font-size: 1.1rem; letter-spacing: 0.3em; flex-shrink: 0; text-align: center;">SENTINEL</div>
+                </div>
+                <span class="v-label" style="font-size: 0.5rem; opacity: 0.4; display: block; width: 100%; text-align: center; letter-spacing: 2px;">AUTHENTICATION_GATEWAY</span>
+            </div>
+
+            <a href="index.html" class="auth-back-link">&larr; RETURN_TO_HOME</a>
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuth('login')">LOGIN</div>
+                <div class="auth-tab" onclick="switchAuth('register')">REGISTER</div>
+            </div>
+
+            <!-- Login Section -->
+            <div id="login-section" class="auth-form-section active">
+                <span class="v-label">Secure Login</span>
+                <h2 style="margin: 20px 0 40px; font-size: 2.5rem; letter-spacing: -1px;">AUTHENTICATE.</h2>
+                <form action="dashboard-user.html">
+                    <div style="margin-bottom: 25px;">
+                        <span class="v-label" style="font-size: 0.75rem; opacity: 0.6;">OPERATOR_ID</span>
+                        <input type="text" placeholder="ID-MATCH-001" class="auth-input" style="margin-bottom: 0;"
+                            required>
+                    </div>
+                    <div style="margin-bottom: 30px;">
+                        <span class="v-label" style="font-size: 0.75rem; opacity: 0.6;">ENCRYPTION_KEY</span>
+                        <input type="password" placeholder="••••••••" class="auth-input" style="margin-bottom: 0;"
+                            required>
+                    </div>
+                    <button type="submit" class="v-button" style="width: 100%;">
+                        <span>Login to System</span>
+                    </button>
+
+                    <div style="margin-top: 30px;">
+                        <span class="v-label"
+                            style="font-size: 0.5rem; opacity: 0.3; display: block; text-align: center; margin-bottom: 20px;">OR_SIGN_IN_WITH_EXTERNAL_PROTOCOL</span>
+                        <div style="display: flex; gap: 15px;">
+                            <button type="button" class="v-button"
+                                style="flex: 1; background: transparent; border-color: var(--v-border); padding: 12px; color: var(--fg);">
+                                <i data-lucide="mail" style="width: 16px; height: 16px; color: var(--v-accent);"></i>
+                                <span
+                                    style="font-size: 0.7rem; letter-spacing: 1px; color: var(--fg); opacity: 1;">GOOGLE</span>
+                            </button>
+                            <button type="button" class="v-button"
+                                style="flex: 1; background: transparent; border-color: var(--v-border); padding: 12px; color: var(--fg);">
+                                <i data-lucide="monitor" style="width: 16px; height: 16px; color: var(--v-accent);"></i>
+                                <span
+                                    style="font-size: 0.7rem; letter-spacing: 1px; color: var(--fg); opacity: 1;">MICROSOFT</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; text-align: right;">
+                        <a href="#"
+                            style="font-size: 0.6rem; opacity: 0.6; color: var(--fg); text-decoration: none; font-family: var(--font-mono);">LOST_CREDENTIALS?</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Section -->
+            <div id="register-section" class="auth-form-section">
+                <span class="v-label">New Registration</span>
+                <h2 style="margin: 20px 0 30px; font-size: 2.5rem; letter-spacing: -1px;">INITIALIZE.</h2>
+                <p style="font-size: 0.85rem; opacity: 0.5; margin-bottom: 40px; line-height: 1.6;">
+                    Welcome to the Sentinel Core. Please provide your institutional credentials to begin the
+                    synchronization process.
+                </p>
+                <form action="dashboard-user.html">
+                    <input type="text" placeholder="OPERATOR_NAME" class="auth-input" required>
+                    <input type="email" placeholder="COMMS_ID // EMAIL" class="auth-input" required>
+                    <input type="password" placeholder="SECURE_KEY // PASSWORD" class="auth-input" required>
+                    <button type="submit" class="v-button" style="width: 100%; margin-top: 20px;">
+                        <span>REGISTER</span>
+                    </button>
+
+                    <div style="margin-top: 30px;">
+                        <span class="v-label"
+                            style="font-size: 0.5rem; opacity: 0.3; display: block; text-align: center; margin-bottom: 20px;">OR_INITIALIZE_WITH_EXTERNAL_PROTOCOL</span>
+                        <div style="display: flex; gap: 15px;">
+                            <button type="button" class="v-button"
+                                style="flex: 1; background: transparent; border-color: var(--v-border); padding: 12px; color: var(--fg);">
+                                <i data-lucide="mail" style="width: 16px; height: 16px; color: var(--v-accent);"></i>
+                                <span
+                                    style="font-size: 0.7rem; letter-spacing: 1px; color: var(--fg); opacity: 1;">GOOGLE</span>
+                            </button>
+                            <button type="button" class="v-button"
+                                style="flex: 1; background: transparent; border-color: var(--v-border); padding: 12px; color: var(--fg);">
+                                <i data-lucide="monitor" style="width: 16px; height: 16px; color: var(--v-accent);"></i>
+                                <span
+                                    style="font-size: 0.7rem; letter-spacing: 1px; color: var(--fg); opacity: 1;">MICROSOFT</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Shared Footer -->
+            <div style="margin-top: 50px; border-top: 1px solid var(--v-border); padding-top: 30px;">
+                <div style="display: flex; gap: 15px; align-items: start;">
+                    <i data-lucide="shield-alert"
+                        style="width: 16px; height: 16px; color: var(--v-accent); flex-shrink: 0; margin-top: 2px;"></i>
+                    <span
+                        style="font-size: 0.55rem; opacity: 0.4; font-family: var(--font-mono); line-height: 1.5; text-transform: uppercase;">
+                        SECURE_UPLINK ENABLED // BIO_SYNC_MONITORING: ON // ANY UNAUTHORIZED ACCESS WILL BE LOGGED AND
+                        TRACED TO SOURCE_NODE.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="rtltoggle.js"></script>
+    <script src="main.js"></script>
+    <script>
+        lucide.createIcons();
+
+        function switchAuth(type) {
+            const loginSec = document.getElementById('login-section');
+            const registerSec = document.getElementById('register-section');
+            const tabs = document.querySelectorAll('.auth-tab');
+
+            if (type === 'login') {
+                loginSec.classList.add('active');
+                registerSec.classList.remove('active');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginSec.classList.remove('active');
+                registerSec.classList.add('active');
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        // Check for URL hash to open specific tab
+        window.addEventListener('load', () => {
+            if (window.location.hash === '#register') {
+                switchAuth('register');
+            }
+        });
+    </script>
+</body>
+
+</html>
